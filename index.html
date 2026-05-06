@@ -305,6 +305,12 @@
           <div id="pressureButtons" class="pressure-buttons"></div>
         </div>
 
+        <div id="smoothboreTipField" class="field full" hidden>
+          <label for="smoothboreTip">Smoothbore Tip Size</label>
+          <select id="smoothboreTip"></select>
+          <p class="helper">Used for scenario clarity and displayed in the result.</p>
+        </div>
+
         <div class="field">
           <label for="applianceLoss">Appliance / Elevation Loss</label>
           <input id="applianceLoss" inputmode="numeric" placeholder="0" />
@@ -343,6 +349,10 @@
           <p>FL / 100'</p>
           <strong id="flPer100">—</strong>
         </div>
+        <div class="detail">
+          <p>Nozzle</p>
+          <strong id="nozzleDisplay">—</strong>
+        </div>
       </div>
     </section>
 
@@ -375,6 +385,16 @@
       smoothbore: [40, 50, 60],
     };
 
+    const SMOOTHBORE_TIPS = [
+      { id: '3/4', label: '3/4"', diameter: 0.75 },
+      { id: '7/8', label: '7/8"', diameter: 0.875 },
+      { id: '15/16', label: '15/16"', diameter: 0.9375 },
+      { id: '1', label: '1"', diameter: 1 },
+      { id: '1-1/8', label: '1 1/8"', diameter: 1.125 },
+      { id: '1-3/16', label: '1 3/16"', diameter: 1.1875 },
+      { id: '1-1/4', label: '1 1/4"', diameter: 1.25 },
+    ];
+
     const STORAGE_KEY = "reverse-flow-calculator-v1-html";
 
     const DEFAULT_STATE = {
@@ -383,6 +403,7 @@
       hoseSize: "1.75",
       nozzleType: "fog",
       nozzlePressure: "100",
+      smoothboreTip: "15/16",
       applianceLoss: "0",
       useCustomCoefficient: false,
       customCoefficient: "",
@@ -395,6 +416,8 @@
       hoseLength: document.getElementById("hoseLength"),
       hoseSize: document.getElementById("hoseSize"),
       nozzleType: document.getElementById("nozzleType"),
+      smoothboreTipField: document.getElementById("smoothboreTipField"),
+      smoothboreTip: document.getElementById("smoothboreTip"),
       pressureButtons: document.getElementById("pressureButtons"),
       applianceLoss: document.getElementById("applianceLoss"),
       coefficientToggle: document.getElementById("coefficientToggle"),
@@ -404,6 +427,7 @@
       calculatedGpm: document.getElementById("calculatedGpm"),
       totalFl: document.getElementById("totalFl"),
       flPer100: document.getElementById("flPer100"),
+      nozzleDisplay: document.getElementById("nozzleDisplay"),
       warningsCard: document.getElementById("warningsCard"),
       resetButton: document.getElementById("resetButton"),
     };
@@ -412,6 +436,7 @@
 
     function init() {
       populateHoseOptions();
+      populateSmoothboreTips();
       syncInputsFromState();
       renderPressureButtons();
       calculateAndRender();
@@ -436,6 +461,12 @@
       )).join("");
     }
 
+    function populateSmoothboreTips() {
+      els.smoothboreTip.innerHTML = SMOOTHBORE_TIPS.map(tip => (
+        `<option value="${tip.id}">${tip.label}</option>`
+      )).join("");
+    }
+
     function bindEvents() {
       ["pdp", "hoseLength", "applianceLoss", "customCoefficient"].forEach(id => {
         els[id].addEventListener("input", e => {
@@ -457,7 +488,14 @@
         state.nozzleType = e.target.value;
         state.nozzlePressure = String(NOZZLE_PRESSURES[state.nozzleType][0]);
         saveState();
+        syncSmoothboreUi();
         renderPressureButtons();
+        calculateAndRender();
+      });
+
+      els.smoothboreTip.addEventListener("change", e => {
+        state.smoothboreTip = e.target.value;
+        saveState();
         calculateAndRender();
       });
 
@@ -482,9 +520,15 @@
       els.hoseLength.value = state.hoseLength;
       els.hoseSize.value = state.hoseSize;
       els.nozzleType.value = state.nozzleType;
+      els.smoothboreTip.value = state.smoothboreTip;
       els.applianceLoss.value = state.applianceLoss;
       els.customCoefficient.value = state.customCoefficient;
       syncCoefficientUi();
+      syncSmoothboreUi();
+    }
+
+    function syncSmoothboreUi() {
+      els.smoothboreTipField.hidden = state.nozzleType !== "smoothbore";
     }
 
     function syncCoefficientUi() {
@@ -527,7 +571,7 @@
 
       const warnings = [];
 
-      setResult("—", "—", "—", "—");
+      setResult("—", "—", "—", "—", getNozzleDisplay());
 
       if (pdp === null || hoseLength === null || nozzlePressure === null || coefficient === null) {
         renderWarnings(warnings);
@@ -554,7 +598,7 @@
 
       if (totalFrictionLoss < 0) {
         warnings.push("Total friction loss is negative after subtracting nozzle pressure and appliance/elevation loss.");
-        setResult("—", "—", `${Math.round(totalFrictionLoss)} psi`, "—");
+        setResult("—", "—", `${Math.round(totalFrictionLoss)} psi`, "—", getNozzleDisplay());
         renderWarnings(warnings);
         return;
       }
@@ -571,16 +615,26 @@
         roundedGpm,
         `${Math.round(calculatedGpm)} GPM`,
         `${Math.round(totalFrictionLoss)} psi`,
-        `${Math.round(frictionLossPer100)} psi`
+        `${Math.round(frictionLossPer100)} psi`,
+        getNozzleDisplay()
       );
       renderWarnings(warnings);
     }
 
-    function setResult(rounded, calculated, total, per100) {
+    function setResult(rounded, calculated, total, per100, nozzle) {
       els.roundedGpm.textContent = rounded;
       els.calculatedGpm.textContent = calculated;
       els.totalFl.textContent = total;
       els.flPer100.textContent = per100;
+      els.nozzleDisplay.textContent = nozzle;
+    }
+
+    function getNozzleDisplay() {
+      if (state.nozzleType === "smoothbore") {
+        const tip = SMOOTHBORE_TIPS.find(item => item.id === state.smoothboreTip);
+        return `${tip ? tip.label : state.smoothboreTip} SB @ ${state.nozzlePressure} psi`;
+      }
+      return `Fog @ ${state.nozzlePressure} psi`;
     }
 
     function renderWarnings(warnings) {
