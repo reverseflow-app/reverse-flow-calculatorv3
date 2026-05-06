@@ -609,14 +609,16 @@
       const requiredFrictionLoss = coefficient * q * q * lengthHundreds;
       const requiredPdp = pressure + requiredFrictionLoss + applianceLoss;
 
-      if (pdp + 0.0001 >= requiredPdp) {
+      const pressureTolerance = 10;
+
+      if (pdp + pressureTolerance >= requiredPdp) {
         return { available: true, requiredPdp };
       }
 
       return {
         available: false,
         requiredPdp,
-        reason: `Requires about ${Math.ceil(requiredPdp)} psi PDP for this hose setup.`,
+        reason: `Requires about ${Math.ceil(requiredPdp)} psi PDP for this hose setup (±10 psi tolerance applied).`;
       };
     }
 
@@ -643,7 +645,7 @@
       if (state.nozzleType === "smoothbore") {
         const availability = getNozzlePressureAvailability(nozzlePressure);
         if (!availability.available) {
-          warnings.push(`Selected smoothbore nozzle pressure requires about ${Math.ceil(availability.requiredPdp)} psi PDP for this hose setup.`);
+          warnings.push(`Selected smoothbore nozzle pressure requires about ${Math.ceil(availability.requiredPdp)} psi PDP for this hose setup (±10 psi tolerance applied).`);
           renderWarnings(warnings);
           return;
         }
