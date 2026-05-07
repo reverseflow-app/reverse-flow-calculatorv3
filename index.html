@@ -323,6 +323,78 @@
       padding: 8px 0 0;
     }
 
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #020617;
+        --card: #0f172a;
+        --ink: #f8fafc;
+        --muted: #94a3b8;
+        --border: #243244;
+        --dark: #000000;
+        --accent: #fb923c;
+        --warning-bg: #451a03;
+        --warning-border: #f97316;
+        --warning-text: #fed7aa;
+        --button: #f8fafc;
+        --button-text: #020617;
+        --button-muted: #111827;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+
+      .badge {
+        background: #f8fafc;
+        color: #020617;
+      }
+
+      label {
+        color: #cbd5e1;
+      }
+
+      input, select {
+        background: #020617;
+        border-color: #334155;
+        color: #f8fafc;
+      }
+
+      input::placeholder {
+        color: #64748b;
+      }
+
+      button {
+        border-color: #334155;
+        background: #111827;
+        color: #f8fafc;
+      }
+
+      button.active {
+        background: #f8fafc;
+        color: #020617;
+        border-color: #f8fafc;
+      }
+
+      button:disabled {
+        background: #1e293b;
+        color: #64748b;
+      }
+
+      .toggle-row,
+      .disabled-note,
+      .calculated-pressure-card {
+        background: #020617;
+        border-color: #334155;
+      }
+
+      .calculated-pressure-card strong,
+      .formula strong,
+      details.about summary {
+        color: #f8fafc;
+      }
+
+      .reset-button {
+        background: #111827;
+      }
+    }
+
     @media (max-width: 720px) {
       .form-grid { grid-template-columns: 1fr; }
       .result-details { grid-template-columns: 1fr; }
@@ -337,7 +409,7 @@
       <div class="badge">💧 Training Calculator</div>
       <h1>Reverse Flow Calculator</h1>
       <p class="subtitle">
-        Estimate flow by working backward from pump discharge pressure, nozzle pressure, hose length, and hose friction characteristics. Default coefficients are based on the HCFD pump operator worksheet.
+        A hydraulic training and reference calculator for estimating fire flow, nozzle pressure, friction loss, and required pump discharge pressure based on hose configuration and nozzle setup.
       </p>
     </header>
 
