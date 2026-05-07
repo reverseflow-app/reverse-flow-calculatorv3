@@ -286,6 +286,28 @@
 
     .formula strong { color: var(--ink); }
 
+    details.about {
+      padding: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    details.about summary {
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .version-footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 0 0;
+    }
+
     @media (max-width: 720px) {
       .form-grid { grid-template-columns: 1fr; }
       .result-details { grid-template-columns: 1fr; }
@@ -411,6 +433,18 @@
       <p>GPM = √(FL per 100' ÷ coefficient) × 100. Final result rounds to the nearest 5 GPM.</p>
       <p>Default coefficients: 1.75” = 15.5, 1.88” = 8, 2.5” = 2, 3” = 0.8, 5” = 0.08.</p>
     </section>
+
+    <section class="card">
+      <details class="about">
+        <summary>About / How to Use</summary>
+        <p><strong>Reverse Flow</strong> estimates GPM by working backward from PDP, nozzle pressure, hose length, and hose coefficient.</p>
+        <p><strong>Required PDP</strong> calculates the pump discharge pressure needed to achieve a target GPM.</p>
+        <p>For smoothbore calculations, select the tip size manually. Smoothbore nozzle pressures that cannot be reached with the entered PDP and hose setup are disabled in Reverse Flow mode.</p>
+        <p>This calculator is intended for training and reference. Always follow local pump charts, equipment testing, department policy, and instructor guidance.</p>
+      </details>
+    </section>
+
+    <p class="version-footer">Reverse Flow Calculator v1.1</p>
   </main>
 
   <script>
