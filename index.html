@@ -585,16 +585,20 @@
       els.nozzleType.addEventListener("change", e => {
         state.nozzleType = e.target.value;
         state.nozzlePressure = String(NOZZLE_PRESSURES[state.nozzleType][0]);
+        syncCalculatedSmoothboreTargetFlow();
         saveState();
         syncSmoothboreUi();
+        syncModeUi();
         renderPressureButtons();
         calculateAndRender();
       });
 
       els.smoothboreTip.addEventListener("change", e => {
         state.smoothboreTip = e.target.value;
+        syncCalculatedSmoothboreTargetFlow();
         saveState();
         enforceValidNozzlePressure();
+        syncModeUi();
         renderPressureButtons();
         calculateAndRender();
       });
@@ -639,14 +643,18 @@
 
     function syncModeUi() {
       const isRequiredPdp = state.mode === "requiredPdp";
+      const smoothboreRequiredPdp = isRequiredPdp && state.nozzleType === "smoothbore";
       els.reverseModeButton.classList.toggle("active", !isRequiredPdp);
       els.pdpModeButton.classList.toggle("active", isRequiredPdp);
       els.pdpLabel.textContent = isRequiredPdp ? "Target Flow" : "Pump Discharge Pressure";
       els.pdp.placeholder = isRequiredPdp ? "GPM" : "PDP";
-      els.pdp.value = isRequiredPdp ? state.targetGpm : state.pdp;
-      els.modeHelper.textContent = isRequiredPdp
-        ? "Required PDP: enter target GPM to calculate the needed pump pressure."
-        : "Reverse Flow: enter PDP to estimate GPM.";
+      els.pdp.disabled = smoothboreRequiredPdp;
+      els.pdp.value = isRequiredPdp ? getTargetFlowValue() : state.pdp;
+      els.modeHelper.textContent = smoothboreRequiredPdp
+        ? "Required PDP: smoothbore target flow is calculated from tip size and nozzle pressure."
+        : isRequiredPdp
+          ? "Required PDP: enter target GPM to calculate the needed pump pressure."
+          : "Reverse Flow: enter PDP to estimate GPM.";
       els.primaryResultLabel.textContent = isRequiredPdp ? "Required PDP" : "Rounded Flow";
       els.primaryResultUnit.textContent = isRequiredPdp ? "PSI" : "GPM";
     }
@@ -690,7 +698,9 @@
         button.addEventListener("click", () => {
           if (button.disabled) return;
           state.nozzlePressure = button.dataset.pressure;
+          syncCalculatedSmoothboreTargetFlow();
           saveState();
+          syncModeUi();
           renderPressureButtons();
           calculateAndRender();
         });
@@ -757,7 +767,8 @@
         : selectedHose.coefficient;
 
       const pdp = numberOrNull(state.pdp);
-      const targetGpm = numberOrNull(state.targetGpm);
+      syncCalculatedSmoothboreTargetFlow();
+      const targetGpm = numberOrNull(getTargetFlowValue());
       const hoseLength = numberOrNull(state.hoseLength);
       const nozzlePressure = numberOrNull(state.nozzlePressure);
       const applianceLoss = numberOrNull(state.applianceLoss) ?? 0;
@@ -827,6 +838,21 @@
         getSetupDisplay()
       );
       renderWarnings(warnings);
+    }
+
+    function getTargetFlowValue() {
+      if (state.mode === "requiredPdp" && state.nozzleType === "smoothbore") {
+        const tip = getSelectedSmoothboreTip();
+        const nozzlePressure = numberOrNull(state.nozzlePressure);
+        if (!tip || nozzlePressure === null) return "";
+        return String(Math.round(smoothboreGpm(tip.diameter, nozzlePressure)));
+      }
+      return state.targetGpm;
+    }
+
+    function syncCalculatedSmoothboreTargetFlow() {
+      if (state.mode !== "requiredPdp" || state.nozzleType !== "smoothbore") return;
+      state.targetGpm = getTargetFlowValue();
     }
 
     function calculateRequiredPdp({ targetGpm, hoseLength, nozzlePressure, applianceLoss, coefficient, selectedHose, warnings }) {
