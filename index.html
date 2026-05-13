@@ -617,6 +617,7 @@ The only calculator that can calculate GPM and Nozzle Pressure backwards from PD
     let state = loadState();
 
     const els = {
+      presetSelect: document.getElementById("presetSelect"),
       reverseModeButton: document.getElementById("reverseModeButton"),
       pdpModeButton: document.getElementById("pdpModeButton"),
       modeHelper: document.getElementById("modeHelper"),
@@ -653,6 +654,7 @@ The only calculator that can calculate GPM and Nozzle Pressure backwards from PD
     function init() {
       populateHoseOptions();
       populateSmoothboreTips();
+      renderPresetOptions();
       syncInputsFromState();
       renderPressureButtons();
       calculateAndRender();
@@ -803,6 +805,16 @@ The only calculator that can calculate GPM and Nozzle Pressure backwards from PD
         ? "Using custom hose coefficient."
         : `Using default coefficient: ${selectedHose.coefficient}`;
     }
+    function renderPresetOptions() {
+  const presets = loadPresets();
+
+  els.presetSelect.innerHTML = `
+    <option value="">No saved setup selected</option>
+    ${presets.map(preset => (
+      `<option value="${preset.id}">${preset.name}</option>`
+    )).join("")}
+  `;
+}
 
     function renderPressureButtons() {
       const reverseSmoothbore = state.mode === "reverse" && state.nozzleType === "smoothbore";
