@@ -1045,14 +1045,23 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
       });
 
       els.nozzleType.addEventListener("change", e => {
-        state.nozzleType = e.target.value;
-        state.nozzlePressure = String(NOZZLE_PRESSURES[state.nozzleType][0]);
-        syncCalculatedSmoothboreTargetFlow();
-        syncSmoothboreUi();
-        syncModeUi();
-        renderPressureButtons();
-        updateCalculator();
-      });
+  state.nozzleType = e.target.value;
+
+  if (isRelayMode()) {
+    saveState();
+    syncModeUi();
+    calculateAndRender();
+    return;
+  }
+
+  state.nozzlePressure = String(NOZZLE_PRESSURES[state.nozzleType][0]);
+
+  syncCalculatedSmoothboreTargetFlow();
+  syncSmoothboreUi();
+  syncModeUi();
+  renderPressureButtons();
+  updateCalculator();
+});
 
       els.smoothboreTip.addEventListener("change", e => {
         state.smoothboreTip = e.target.value;
