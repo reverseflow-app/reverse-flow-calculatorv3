@@ -1044,16 +1044,16 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
     }
 
     function handleWholeNumberInput(id, inputElement) {
-      if (id === "pdp" && isRequiredPdpMode()) {
-        state.targetGpm = wholeNumber(inputElement.value);
-        inputElement.value = state.targetGpm;
-      } else {
-        state[id] = wholeNumber(inputElement.value);
-        inputElement.value = state[id];
-      }
+  if (id === "pdp" && (isRequiredPdpMode() || isRelayMode())) {
+    state.targetGpm = wholeNumber(inputElement.value);
+    inputElement.value = state.targetGpm;
+  } else {
+    state[id] = wholeNumber(inputElement.value);
+    inputElement.value = state[id];
+  }
 
-      updateCalculator();
-    }
+  updateCalculator();
+}
 
     function updateCalculator() {
       saveState();
@@ -1196,12 +1196,17 @@ populateHoseOptions();
 
       setResult("—", "—", "—", "—", getNozzleDisplay(), getSetupDisplay());
 
-      if (isRequiredPdpMode()) {
-        calculateRequiredPdp({ ...inputs, warnings });
-        return;
-      }
+      if (isRelayMode()) {
+  calculateRelayPdp({ ...inputs, warnings });
+  return;
+}
 
-      calculateReverseFlow({ ...inputs, warnings });
+if (isRequiredPdpMode()) {
+  calculateRequiredPdp({ ...inputs, warnings });
+  return;
+}
+
+calculateReverseFlow({ ...inputs, warnings });
     }
 
     function getCalculationInputs() {
@@ -1345,7 +1350,70 @@ populateHoseOptions();
 
       renderWarnings(warnings);
     }
+      // ========================================
+// RELAY PDP CALCULATIONS
+// ========================================
 
+function calculateRelayPdp({
+  targetGpm,
+  hoseLength,
+  applianceLoss,
+  coefficient,
+  selectedHose,
+  warnings
+}) {
+
+  const residualPressure = Number(state.nozzleType);
+
+  if (
+    targetGpm === null ||
+    hoseLength === null ||
+    coefficient === null
+  ) {
+    renderWarnings(warnings);
+    return;
+  }
+
+  if (!validateCommonInputs({ hoseLength, coefficient, warnings })) {
+    return;
+  }
+
+  if (targetGpm <= 0) {
+    warnings.push("Target flow must be greater than 0 GPM.");
+    renderWarnings(warnings);
+    return;
+  }
+
+  const q = targetGpm / 100;
+  const lengthHundreds = hoseLength / 100;
+
+  const frictionLossPer100 = coefficient * q * q;
+
+  const totalFrictionLoss = frictionLossPer100 * lengthHundreds;
+
+  const requiredRelayPdp =
+    totalFrictionLoss +
+    residualPressure +
+    applianceLoss;
+
+  if (targetGpm > selectedHose.maxReferenceFlow) {
+    warnings.push(
+      `Target flow exceeds the reference range for ${selectedHose.chartName}.`
+    );
+  }
+
+  setResult(
+    Math.round(requiredRelayPdp),
+    `${Math.round(targetGpm)} GPM`,
+    `${Math.round(totalFrictionLoss)} psi`,
+    `${Math.round(frictionLossPer100)} psi`,
+    `${residualPressure} psi residual`,
+    `${hoseLength}' relay lay`,
+    "—"
+  );
+
+  renderWarnings(warnings);
+}
     // ========================================
     // VALIDATION
     // ========================================
