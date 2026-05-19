@@ -553,27 +553,27 @@
 
       <div class="result-details">
         <div class="detail">
-          <p>Calculated</p>
+          <p id="calculatedLabel">Calculated</p>
           <strong id="calculatedGpm">—</strong>
         </div>
         <div class="detail">
-          <p>Total FL</p>
+          <p> id="totalFlLabel">Total FL</p>
           <strong id="totalFl">—</strong>
         </div>
         <div class="detail">
-          <p>FL / 100'</p>
+          <p> id="flPer100Label">FL / 100'</p>
           <strong id="flPer100">—</strong>
         </div>
         <div class="detail">
-          <p>Nozzle</p>
+          <p> id="nozzleDisplayLabel">Nozzle</p>
           <strong id="nozzleDisplay">—</strong>
         </div>
         <div class="detail">
-          <p>Reaction</p>
+          <p> id="reactionLabel">Reaction</p>
           <strong id="nozzleReaction">—</strong>
         </div>
         <div class="detail">
-          <p>Setup</p>
+          <p> id="setupLabel">Setup</p>
           <strong id="setupDisplay">—</strong>
         </div>
       </div>
@@ -714,6 +714,12 @@
 
       primaryResultLabel: document.getElementById("primaryResultLabel"),
       primaryResultUnit: document.getElementById("primaryResultUnit"),
+      calculatedLabel: document.getElementById("calculatedLabel"),
+      totalFlLabel: document.getElementById("totalFlLabel"),
+      flPer100Label: document.getElementById("flPer100Label"),
+      nozzleDisplayLabel: document.getElementById("nozzleDisplayLabel"),
+      reactionLabel: document.getElementById("reactionLabel"),
+      setupLabel: document.getElementById("setupLabel"),
       roundedGpm: document.getElementById("roundedGpm"),
       calculatedGpm: document.getElementById("calculatedGpm"),
       totalFl: document.getElementById("totalFl"),
@@ -940,6 +946,25 @@ document.querySelector('label[for="applianceLoss"]').textContent =
   isRelayMode() || isRequiredPdpMode()
     ? "PSI"
     : "GPM";
+     if (isRelayMode()) {
+
+  els.calculatedLabel.textContent = "Target Flow";
+  els.totalFlLabel.textContent = "Relay FL";
+  els.flPer100Label.textContent = "FL / 100'";
+  els.nozzleDisplayLabel.textContent = "Residual";
+  els.reactionLabel.textContent = "Reserve";
+  els.setupLabel.textContent = "Relay Lay";
+
+} else {
+
+  els.calculatedLabel.textContent = "Calculated";
+  els.totalFlLabel.textContent = "Total FL";
+  els.flPer100Label.textContent = "FL / 100'";
+  els.nozzleDisplayLabel.textContent = "Nozzle";
+  els.reactionLabel.textContent = "Reaction";
+  els.setupLabel.textContent = "Setup";
+
+} 
     els.nozzleType.closest(".field").style.display = "";
 els.nozzleTypeLabel.textContent = isRelayMode()
   ? "Receiving Engine Residual"
