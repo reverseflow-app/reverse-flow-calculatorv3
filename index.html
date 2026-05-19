@@ -912,6 +912,15 @@
       ? getTargetFlowValue()
           : state.pdp;
 
+      document.querySelector('label[for="hoseLength"]').textContent =
+  isRelayMode() ? "Relay Distance" : "Hose Length";
+
+document.querySelector('label[for="hoseSize"]').textContent =
+  isRelayMode() ? "Relay Hose Layout" : "Hose Size";
+
+document.querySelector('label[for="applianceLoss"]').textContent =
+  isRelayMode() ? "Appliance / Elevation / Intake Loss" : "Appliance / Elevation Loss";
+
     els.modeHelper.textContent = isRelayMode()
   ? "Relay Pumping: calculate the discharge pressure needed to supply a receiving engine."
   : smoothboreRequiredPdp
