@@ -870,7 +870,7 @@
 
       els.reverseModeButton.classList.toggle("active", isReverseMode());
       els.pdpModeButton.classList.toggle("active", isRequiredPdpMode());
-      els.relayModeButton.classlist.toggle("active",isRelayMode());
+      els.relayModeButton.classList.toggle("active",isRelayMode());
 
       els.pdpLabel.textContent = isRequiredPdpMode() ? "Target Flow" : "Pump Discharge Pressure";
       els.pdp.placeholder = isRequiredPdpMode() ? "GPM" : "PDP";
@@ -1372,6 +1372,7 @@
 
     function isRelayMode() {
       return state.mode === "relay";
+    }
 
     function isSmoothbore() {
       return state.nozzleType === "smoothbore";
