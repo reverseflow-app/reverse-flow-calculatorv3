@@ -1094,25 +1094,60 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
     }
 
     function setMode(mode) {
-    state.mode = mode;
 
-if (isRelayMode()) {
-  state.nozzleType = "30";
-  state.hoseSize = "5";
+  state.mode = mode;
+
+  // ========================================
+  // RELAY MODE DEFAULTS
+  // ========================================
+
+  if (mode === "relay") {
+
+    state.pdp = "";
+    state.targetGpm = "";
+    state.hoseLength = "";
+    state.hoseSize = "5";
+
+    state.nozzleType = "30";
+    state.nozzlePressure = "";
+
+    state.smoothboreTip = "";
+
+    state.applianceLoss = "0";
+
+  }
+
+  // ========================================
+  // STANDARD CALCULATOR DEFAULTS
+  // ========================================
+
+  if (mode === "reverse" || mode === "requiredPdp") {
+
+    state.pdp = "";
+    state.targetGpm = "";
+    state.hoseLength = "";
+    state.hoseSize = "1.88";
+
+    state.nozzleType = "fog";
+    state.nozzlePressure = "55";
+
+    state.smoothboreTip = "";
+
+    state.applianceLoss = "0";
+
+  }
+
+  populateHoseOptions();
+
+  saveState();
+
+  syncInputsFromState();
+  syncSmoothboreUi();
+  syncModeUi();
+
+  renderPressureButtons();
+  calculateAndRender();
 }
-
-if (!isRelayMode() && !["fog", "smoothbore"].includes(state.nozzleType)) {
-  state.nozzleType = "fog";
-  state.hoseSize = "1.88";
-}
-
-populateHoseOptions();
-
-    saveState();
-    syncModeUi();
-    renderPressureButtons();
-    calculateAndRender();
-    }
 
     function resetCalculator() {
       state = { ...DEFAULT_STATE };
