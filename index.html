@@ -269,6 +269,18 @@
   position: relative;
   overflow: hidden;
 }
+.result-top::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(251, 146, 60, 0.18),
+      transparent 40%
+    );
+  pointer-events: none;
+}
    .result-top::after {
   content: "";
   position: absolute;
