@@ -244,6 +244,88 @@ button:active:not(:disabled) {
   padding: 3px 6px;
   border-radius: 999px;
 }
+    .pro-preview {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  background: rgba(234, 88, 12, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.pro-preview strong {
+  display: block;
+  font-size: 14px;
+}
+
+.pro-preview p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.pro-preview span {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+    .pro-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+}
+
+.pro-modal-content {
+  width: min(460px, 100%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+}
+
+.pro-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.pro-modal-header h2 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.04em;
+}
+
+.pro-modal-subtitle {
+  margin: 14px 0 20px;
+  color: var(--muted);
+}
+
+.pro-feature-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.pro-modal-footer {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 14px;
+}
 
     .toggle-row {
       display: flex;
@@ -351,6 +433,7 @@ button:active:not(:disabled) {
 }
 
     .detail {
+  position: relative;
   padding: 20px;
   border-right: 1px solid var(--border);
   background: linear-gradient(
@@ -761,6 +844,35 @@ Dual 3” = 0.4,
       </details>
     </section>
 
+    <div id="proModal" class="pro-modal" hidden>
+  <div class="pro-modal-content">
+
+    <div class="pro-modal-header">
+      <h2>Reverse Flow PRO</h2>
+      <button id="closeProModal" class="small-button" type="button">
+        Close
+      </button>
+    </div>
+
+    <p class="pro-modal-subtitle">
+      Advanced hydraulic modules built for professional fireground operations.
+    </p>
+
+    <div class="pro-feature-list">
+      <div>✓ Split Lay Calculations</div>
+      <div>✓ Equipment Catalog Profiles</div>
+      <div>✓ Department Pump Packages</div>
+      <div>✓ Advanced Relay Operations</div>
+      <div>✓ Future Module Access</div>
+    </div>
+
+    <div class="pro-modal-footer">
+      One-time purchase. No subscription.
+    </div>
+
+  </div>
+</div>
+    
     <p class="version-footer" id="versionFooter"></p>
   </main>
 
@@ -953,6 +1065,10 @@ console.log(`Reverse Flow Calculator v${APP_VERSION}`);
       setupDisplay: document.getElementById("setupDisplay"),
       warningsCard: document.getElementById("warningsCard"),
 
+      splitLayButton: document.getElementById("splitLayButton"),
+      proModal: document.getElementById("proModal"),
+      closeProModal: document.getElementById("closeProModal"),
+      
       versionFooter: document.getElementById("versionFooter"),
     };
 
@@ -1275,6 +1391,13 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
       els.reverseModeButton.addEventListener("click", () => setMode("reverse"));
       els.pdpModeButton.addEventListener("click", () => setMode("requiredPdp"));
       els.relayModeButton.addEventListener("click", () => setMode("relay"));
+      els.splitLayButton.addEventListener("click", () => {
+  els.proModal.hidden = false;
+});
+
+els.closeProModal.addEventListener("click", () => {
+  els.proModal.hidden = true;
+});
 
       ["pdp", "hoseLength", "applianceLoss"].forEach(id => {
         els[id].addEventListener("input", e => handleWholeNumberInput(id, e.target));
