@@ -1731,7 +1731,22 @@ document.addEventListener("keydown", event => {
 
       setResult("—", "—", "—", "—", getNozzleDisplay(), getSetupDisplay());
 
-      if (isRelayMode()) {
+      
+      if (isSplitLayMode()) {
+  setResult(
+    "—",
+    "PRO Module",
+    "—",
+    "—",
+    "Split Lay",
+    "Awaiting inputs",
+    "—"
+  );
+  renderWarnings([]);
+  return;
+}
+
+if (isRelayMode()) {
   calculateRelayPdp({ ...inputs, warnings });
   return;
 }
