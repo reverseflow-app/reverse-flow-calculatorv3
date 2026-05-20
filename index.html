@@ -839,37 +839,43 @@ Select a hydraulic calculation mode.
       <button id="resetButton" class="reset-button" type="button">↺ Reset</button>
     </div>
 
-    <section class="card formula">
-      <p><strong>Reverse Flow Formula</strong></p>
-<p>Total friction loss = PDP − nozzle pressure − appliance/elevation loss.</p>
-<p>Friction loss per 100' = total friction loss ÷ hose length in hundreds of feet.</p>
-<p>GPM = √(FL per 100' ÷ coefficient) × 100. Final result rounds to the nearest 5 GPM.</p>
+    <section class="card formula" id="formulaCard">
 
-<br>
+  <div id="reverseFormula">
+    <p><strong>Reverse Flow Formula</strong></p>
+    <p>Total friction loss = PDP − nozzle pressure − appliance/elevation loss.</p>
+    <p>Friction loss per 100' = total friction loss ÷ hose length in hundreds of feet.</p>
+    <p>GPM = √(FL per 100' ÷ coefficient) × 100.</p>
+    <p>Final result rounds to the nearest 5 GPM.</p>
+  </div>
 
-<p><strong>Required PDP Formula</strong></p>
-<p>Required PDP = nozzle pressure + friction loss + appliance/elevation loss.</p>
+  <div id="requiredPdpFormula" hidden>
+    <p><strong>Required PDP Formula</strong></p>
+    <p>Required PDP = nozzle pressure + friction loss + appliance/elevation loss.</p>
+  </div>
 
-<br>
+  <div id="relayFormula" hidden>
+    <p><strong>Relay Pumping Formula</strong></p>
+    <p>Relay PDP = relay friction loss + receiving engine residual + appliance/elevation loss.</p>
+  </div>
 
-<p><strong>Relay Pumping Formula</strong></p>
-<p>Relay PDP = relay friction loss + receiving engine residual + appliance/elevation loss.</p>
+  <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
 
-<br>
+  <p><strong>Default Coefficients</strong></p>
 
-<p><strong>Default Coefficients</strong></p>
-<p>
-1.75” = 15.5,
-1.88” = 8,
-2” = 4,
-2.25” = 3,
-2.5” = 2,
-3” = 0.8,
-Dual 3” = 0.4,
-4” = 0.2,
-5” = 0.08
-</p>
-    </section>
+  <p>
+    1.75” = 15.5,
+    1.88” = 8,
+    2” = 4,
+    2.25” = 3,
+    2.5” = 2,
+    3” = 0.8,
+    Dual 3” = 0.4,
+    4” = 0.2,
+    5” = 0.08
+  </p>
+
+</section>
 
     <section class="card">
       <details class="about">
@@ -1109,6 +1115,9 @@ console.log(`Reverse Flow Calculator v${APP_VERSION}`);
       splitLayButton: document.getElementById("splitLayButton"),
       proModal: document.getElementById("proModal"),
       closeProModal: document.getElementById("closeProModal"),
+      reverseFormula: document.getElementById("reverseFormula"),
+      requiredPdpFormula: document.getElementById("requiredPdpFormula"),
+      relayFormula: document.getElementById("relayFormula"),
       
       versionFooter: document.getElementById("versionFooter"),
     };
@@ -1336,6 +1345,10 @@ document.querySelector('label[for="applianceLoss"]').textContent =
     : isRequiredPdpMode()
       ? "Required PDP: enter target GPM to calculate the needed pump pressure."
       : "Reverse Flow: enter PDP to estimate GPM.";
+
+      els.reverseFormula.hidden = !isReverseMode();
+      els.requiredPdpFormula.hidden = !isRequiredPdpMode();
+      els.relayFormula.hidden = !isRelayMode();
 
       els.primaryResultLabel.textContent =
   isRelayMode()
@@ -1909,7 +1922,7 @@ function calculateRelayPdp({
     `${Math.round(totalFrictionLoss)} psi`,
     `${Math.round(frictionLossPer100)} psi`,
     `${residualPressure} psi residual`,
-    `${hoseLength}' relay distance`,
+    `${hoseLength}' Relay Distance`,
     "—"
   );
 
