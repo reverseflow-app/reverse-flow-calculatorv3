@@ -853,7 +853,7 @@ Select a hydraulic calculation mode.
         <summary>About / How to Use</summary>
         <p><strong>Reverse Flow Mode</strong> Estimates GPM by working backwards using PDP, Nozzle Pressure, and Friction Loss.</p>
         <p><strong>Required PDP Mode</strong> Calculates the pump discharge pressure needed to achieve a target GPM.</p>
-        </p><strong>Relay Pumping Mode</strong> Calculates the required PDP for a relay pumper to supply a receiving unit with specific target flow.</p>
+        <p><strong>Relay Pumping Mode</strong> Calculates the required PDP for a relay pumper to supply a receiving unit with a specific target flow.</p>
         <p>For smoothbore calculations, select the tip size manually when in PDP mode. Smoothbore nozzle pressures will be calculated automatically in Reverse Flow mode.</p>
         <p>This calculator is intended for training and reference. Always follow local pump charts, equipment testing, department policy, and instructor guidance.</p>
       </details>
@@ -993,7 +993,7 @@ console.log(`Reverse Flow Calculator v${APP_VERSION}`);
 
     const RELAY_HOSE_OPTIONS = [
       { id: "3", label: '3"', coefficient: 0.8, maxReferenceFlow: 900, chartName: '3"' },
-      { id: "dual3", label: 'Dual 3"', coefficient: 0.4, maxReferenceFlow: 1500, chartName: 'Dual 3"' },
+      { id: "dual3", label: 'Dual 3"', coefficient: 0.2, maxReferenceFlow: 1500, chartName: 'Dual 3"' },
       { id: "4", label: '4"', coefficient: 0.2, maxReferenceFlow: 1200, chartName: '4"' },
       { id: "5", label: '5"', coefficient: 0.08, maxReferenceFlow: 2000, chartName: '5"' },
     ];
