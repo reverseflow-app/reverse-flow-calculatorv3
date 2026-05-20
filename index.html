@@ -1450,7 +1450,12 @@ els.pdpModeButton.addEventListener("click", () => setMode("requiredPdp"));
 els.relayModeButton.addEventListener("click", () => setMode("relay"));
 
 els.splitLayButton.addEventListener("click", () => {
-  els.proModal.hidden = false;
+  if (!canAccessFeature("splitLay")) {
+    els.proModal.hidden = false;
+    return;
+  }
+
+  setMode("splitLay");
 });
 
 els.closeProModal.addEventListener("click", () => {
@@ -2053,6 +2058,10 @@ function calculateRelayPdp({
     function isRelayMode() {
       return state.mode === "relay";
     }
+
+    function isSplitLayMode() {
+      return state.mode === "splitLay";
+}
 
     function isSmoothbore() {
       return state.nozzleType === "smoothbore";
