@@ -2379,6 +2379,22 @@ function calculateSplitLay(warnings) {
   const totalSupplyFlow =
     attackFlow * attackLines;
 
+  let automaticApplianceLoss = 0;
+
+if (
+  (
+    state.splitLay.appliance === "gatedWye" ||
+    state.splitLay.appliance === "gateValve"
+  ) &&
+  totalSupplyFlow > 350
+) {
+  automaticApplianceLoss = 10;
+}
+
+if (state.splitLay.appliance === "standpipe") {
+  automaticApplianceLoss = 25;
+}
+
   const supplyQ =
     totalSupplyFlow / 100;
 
@@ -2392,10 +2408,11 @@ function calculateSplitLay(warnings) {
     (supplyLength / 100);
 
   const totalPdp =
-    nozzlePressure +
-    attackTotalFl +
-    supplyTotalFl +
-    applianceLoss;
+  nozzlePressure +
+  attackTotalFl +
+  supplyTotalFl +
+  applianceLoss +
+  automaticApplianceLoss;
     const nozzleReaction =
   state.splitLay.attackNozzleType === "smoothbore"
     ? (() => {
