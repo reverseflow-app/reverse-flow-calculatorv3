@@ -1895,7 +1895,14 @@ document.getElementById("splitAttackSmoothboreTip")?.addEventListener("change", 
   // ========================================
   // STANDARD CALCULATOR DEFAULTS
   // ========================================
+  if (mode !== "splitLay") {
 
+  state.splitLay = {
+    ...DEFAULT_STATE.splitLay
+  };
+
+}
+      
   if (mode === "reverse" || mode === "requiredPdp") {
 
     state.pdp = "";
