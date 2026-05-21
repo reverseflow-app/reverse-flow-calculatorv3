@@ -1225,6 +1225,8 @@ console.log(`Reverse Flow Calculator v${APP_VERSION}`);
 
     function init() {
   els.versionFooter.textContent = `Reverse Flow Calculator v${APP_VERSION}`;
+  state = { ...DEFAULT_STATE };
+  localStorage.removeItem(STORAGE_KEY);
   updateAccessBadge();
 
   populateHoseOptions();
