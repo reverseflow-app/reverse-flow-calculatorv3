@@ -2025,7 +2025,7 @@ els.presetSelect.selectedIndex = 0;
   state = {
   ...state,
 
-  mode: preset.mode || "reverse",
+  mode: preset.mode || state.mode,
 
   hoseLength: preset.hoseLength || "",
   hoseSize: preset.hoseSize || "1.88",
