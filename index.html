@@ -1528,10 +1528,8 @@ document.querySelector('label[for="applianceLoss"]').textContent =
   els.nozzleReaction.parentElement.style.display = "";
 
 } 
-    els.nozzleType.closest(".field").style.display =
-  (isSplitLayMode() || isRelayMode())
-    ? "none"
-    : "";
+    
+      els.nozzleType.closest(".field").style.display =
   isSplitLayMode() ? "none" : "";
 els.nozzleTypeLabel.textContent = isRelayMode()
   ? "Receiving Engine Residual"
