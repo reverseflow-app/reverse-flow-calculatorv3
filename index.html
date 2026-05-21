@@ -1500,7 +1500,7 @@ document.querySelector('label[for="applianceLoss"]').textContent =
         : "Rounded Flow";
       
       els.primaryResultUnit.textContent =
-  isRelayMode() || isRequiredPdpMode()
+  isRelayMode() || isRequiredPdpMode() || isSplitLayMode()
     ? "PSI"
     : "GPM";
      if (isRelayMode()) {
