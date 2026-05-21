@@ -30,6 +30,8 @@
       --border: #dbe3ee;
       --dark: #020617;
       --accent: #ea580c;
+      --mode-accent: #ea580c;
+      --mode-glow: rgba(234, 88, 12, 0.18);
       --warning-bg: #fef3c7;
       --warning-border: #f59e0b;
       --warning-text: #78350f;
@@ -89,24 +91,39 @@
     }
 
     button {
-      height: 46px;
-      border: 1px solid #cbd5e1;
-      border-radius: 14px;
-      background: var(--button-muted);
-      color: var(--ink);
-      font-size: 16px;
-      font-weight: 750;
-      cursor: pointer;
-      transition: transform 0.06s ease, background 0.15s ease, color 0.15s ease;
-    }
+  min-height: 58px;
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  background: var(--button-muted);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.08s ease,
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
 
     button:active { transform: scale(0.98); }
 
     button.active {
-      background: var(--button);
-      color: var(--button-text);
-      border-color: var(--button);
-    }
+  background: var(--button);
+  color: var(--button-text);
+  border-color: var(--button);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 10px 24px rgba(15, 23, 42, 0.18);
+}
+    button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.985);
+}
 
     button:disabled {
       opacity: 0.35;
@@ -181,17 +198,152 @@
       color: var(--muted);
       margin: 0;
     }
+    .section-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--border),
+    transparent
+  );
+  margin: 4px 0;
+}
 
     .mode-buttons,
-    .pressure-buttons {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
+.pressure-buttons {
+  display: grid;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.mode-buttons {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pressure-buttons {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+    .mode-buttons button {
+  padding: 12px 14px;
+  text-align: center;
+  line-height: 1.2;
+}
 
     .pressure-buttons {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+
+    .mode-card-pro {
+  position: relative;
+  overflow: hidden;
+  opacity: 0.78;
+  border-style: dashed;
+}
+  .mode-card-pro:hover {
+  opacity: 1;
+}  
+
+.mode-card-pro::after {
+  content: "PRO";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  background: var(--accent);
+  color: white;
+  padding: 3px 6px;
+  border-radius: 999px;
+}
+    .pro-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+}
+  .pro-modal[hidden] {
+  display: none;
+}  
+
+.pro-modal-content {
+  width: min(460px, 100%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+  position: relative;
+  overflow: hidden;
+}
+  .pro-modal-content::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(251, 146, 60, 0.14),
+      transparent 38%
+    );
+  pointer-events: none;
+}  
+
+.pro-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+    .modal-close-button {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 900;
+  padding: 0;
+}
+
+.pro-modal-header h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.pro-modal-subtitle {
+  margin: 14px 0 20px;
+  color: var(--muted);
+}
+
+.pro-feature-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.pro-feature-list div {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  font-weight: 750;
+}
+
+.pro-modal-footer {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 14px;
+}
+    
 
     .toggle-row {
       display: flex;
@@ -241,13 +393,27 @@
       line-height: 1.1;
       margin-top: 4px;
     }
-
     /* ---------- Results ---------- */
     .result-top {
-      background: var(--dark);
-      color: white;
-      padding: 24px;
-    }
+  background: var(--dark);
+  color: white;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.result-top::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at top right,
+      var(--mode-glow),
+      transparent 58%
+    );
+  opacity: 1;
+  pointer-events: none;
+}
 
     .result-label {
       color: #94a3b8;
@@ -265,10 +431,11 @@
     }
 
     .result-number strong {
-      font-size: clamp(56px, 14vw, 88px);
-      line-height: 0.9;
-      letter-spacing: -0.06em;
-    }
+  font-size: clamp(60px, 15vw, 96px);
+  line-height: 0.88;
+  letter-spacing: -0.07em;
+  font-weight: 850;
+}
 
     .result-number span {
       font-size: 24px;
@@ -277,29 +444,40 @@
       font-weight: 700;
     }
 
-    .result-details {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      border-top: 1px solid var(--border);
-    }
+   .result-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  border-top: 1px solid var(--border);
+}
 
     .detail {
-      padding: 18px;
-      border-right: 1px solid var(--border);
-    }
+  position: relative;
+  padding: 20px;
+  border-right: 1px solid var(--border);
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.02),
+    transparent
+  );
+}
 
     .detail:last-child { border-right: none; }
 
     .detail p {
-      margin: 0 0 6px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      font-size: 11px;
-      font-weight: 850;
-    }
+  margin: 0 0 8px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 900;
+}
 
-    .detail strong { font-size: 26px; }
+    .detail strong {
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  display: block;
+}
 
     /* ---------- Warnings / Footer ---------- */
     .warnings {
@@ -437,12 +615,24 @@
     grid-template-columns: 1fr;
   }
 
-  .result-details { grid-template-columns: 1fr; }
   .detail {
     border-right: none;
     border-bottom: 1px solid var(--border);
+    position: relative;
   }
   .detail:last-child { border-bottom: none; }
+}
+    .detail::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom right,
+      rgba(255,255,255,0.025),
+      transparent 50%
+    );
+  pointer-events: none;
 }
   </style>
 </head>
@@ -453,10 +643,13 @@
          APP HEADER
     ========================================= -->
     <header>
-      <div class="badge-row">
-        <div class="badge">Training Calculator</div>
-        <div class="badge beta">BETA</div>
-      </div>
+     <div class="badge-row">
+  <div class="badge">Hydraulic Operations Platform</div>
+
+  <div class="badge beta" id="accessBadge">
+    PRO BETA ACCESS
+  </div>
+</div> 
 
       <h1>Reverse Flow</h1>
       <p class="subtitle">All-in-One Hydraulic Application for the fire service.</p>
@@ -477,16 +670,150 @@
         </div>
 
         <div class="field full">
-          <label>Calculator Mode</label>
-          <div class="mode-buttons">
-            <button id="reverseModeButton" type="button">Reverse Flow Mode</button>
-            <button id="pdpModeButton" type="button">Required PDP Mode</button>
-            <button id="relayModeButton" type="button">Relay Pumping Mode</button>
-          </div>
+          <label>Operations Module</label>
+<p class="helper">
+Select a hydraulic calculation mode.
+</p>
+
+          <div class="mode-buttons" id="modeButtons">
+  <button id="reverseModeButton" type="button">
+    Reverse Flow Mode
+  </button>
+
+  <button id="pdpModeButton" type="button">
+    Required PDP Mode
+  </button>
+
+  <button id="relayModeButton" type="button">
+    Relay Pumping Mode
+  </button>
+
+  <button
+    id="splitLayButton"
+    type="button"
+    class="mode-card-pro"
+  >
+    Split Lay Mode
+  </button>
+</div>
           <p class="helper" id="modeHelper">Reverse Flow Mode: Enter PDP to estimate GPM and Nozzle Pressure based on hose and nozzle characteristics.</p>
+          <div class="section-divider">
         </div>
 
-        <div class="field">
+          <div id="splitLayFields" class="field full" hidden>
+  <div class="split-lay-panel">
+
+  <strong>Split Lay Setup</strong>
+
+  <p class="helper">
+    Configure supply hose, appliance, and attack line sections.
+  </p>
+
+  <div class="split-lay-grid">
+
+    <div class="field">
+      <label>Supply Length</label>
+      <input id="splitSupplyLength" inputmode="numeric" placeholder="Feet" />
+    </div>
+
+    <div class="field">
+      <label>Supply Hose</label>
+      <select id="splitSupplyHose">
+  <option value="2">2"</option>
+  <option value="2.25">2.25"</option>
+  <option value="2.5">2.5"</option>
+  <option value="3">3"</option>
+  <option value="4">4"</option>
+  <option value="5">5"</option>
+</select>
+    </div>
+
+    <div class="field">
+      <label>Appliance</label>
+      <select id="splitAppliance">
+  <option value="gatedWye">Gated Wye</option>
+  <option value="gateValve">Gate Valve</option>
+  <option value="standpipe">Standpipe</option>
+</select>
+    </div>
+
+    <div class="field">
+      <label>Attack Lines</label>
+      <select id="splitAttackLines">
+        <option value="1">1 Line</option>
+        <option value="2">2 Lines</option>
+      </select>
+    </div>
+    <div class="field">
+  <label>Attack Length</label>
+  <input id="splitAttackLength" inputmode="numeric" placeholder="Feet" />
+</div>
+
+<div class="field">
+  <label>Attack Hose</label>
+  <select id="splitAttackHose">
+    <option value="1.75">1.75"</option>
+    <option value="1.88">1.88"</option>
+    <option value="2">2"</option>
+    <option value="2.25">2.25"</option>
+    <option value="2.5">2.5"</option>
+  </select>
+</div>
+
+<div class="field">
+  <label>Attack Nozzle</label>
+  <select id="splitAttackNozzleType">
+    <option value="fog">Fog</option>
+    <option value="smoothbore">Smoothbore</option>
+  </select>
+</div>
+    <div class="field">
+  <label>Attack Nozzle Pressure</label>
+
+  <select id="splitAttackNozzlePressure">
+    <option value="50">50 psi</option>
+    <option value="55">55 psi</option>
+    <option value="75">75 psi</option>
+    <option value="100">100 psi</option>
+  </select>
+</div>
+    <div
+  class="field"
+  id="splitAttackFlowField"
+>
+  <label>Target Attack Flow</label>
+
+  <input
+    id="splitAttackFlow"
+    inputmode="numeric"
+    placeholder="GPM"
+  />
+</div>
+
+<div
+  class="field"
+  id="splitSmoothboreTipField"
+  hidden
+>
+  <label>Attack Smoothbore Tip</label>
+
+  <select id="splitAttackSmoothboreTip">
+    <option value="3/4">3/4"</option>
+    <option value="7/8">7/8"</option>
+    <option value="15/16">15/16"</option>
+    <option value="1">1"</option>
+    <option value="1-1/8">1 1/8"</option>
+    <option value="1-3/16">1 3/16"</option>
+    <option value="1-1/4">1 1/4"</option>
+  </select>
+</div>
+
+   </div>
+
+  </div>
+</div>
+          
+<div class="field">
           <label for="pdp" id="pdpLabel">Pump Discharge Pressure</label>
           <input id="pdp" inputmode="numeric" placeholder="PDP" />
         </div>
@@ -527,6 +854,8 @@
           <div id="disabledPressureExplanations" class="disabled-explanations" hidden></div>
         </div>
 
+         <div class="section-divider"></div>
+          
         <div class="field">
           <label for="applianceLoss">Appliance / Elevation Loss</label>
           <input id="applianceLoss" inputmode="numeric" placeholder="0" />
@@ -594,49 +923,87 @@
       <button id="resetButton" class="reset-button" type="button">↺ Reset</button>
     </div>
 
-    <section class="card formula">
-      <p><strong>Reverse Flow Formula</strong></p>
-<p>Total friction loss = PDP − nozzle pressure − appliance/elevation loss.</p>
-<p>Friction loss per 100' = total friction loss ÷ hose length in hundreds of feet.</p>
-<p>GPM = √(FL per 100' ÷ coefficient) × 100. Final result rounds to the nearest 5 GPM.</p>
+    <section class="card formula" id="formulaCard">
 
-<br>
+  <div id="reverseFormula">
+    <p><strong>Reverse Flow Formula</strong></p>
+    <p>Total friction loss = PDP − nozzle pressure − appliance/elevation loss.</p>
+    <p>Friction loss per 100' = total friction loss ÷ hose length in hundreds of feet.</p>
+    <p>GPM = √(FL per 100' ÷ coefficient) × 100.</p>
+    <p>Final result rounds to the nearest 5 GPM.</p>
+  </div>
 
-<p><strong>Required PDP Formula</strong></p>
-<p>Required PDP = nozzle pressure + friction loss + appliance/elevation loss.</p>
+  <div id="requiredPdpFormula" hidden>
+    <p><strong>Required PDP Formula</strong></p>
+    <p>Required PDP = nozzle pressure + friction loss + appliance/elevation loss.</p>
+  </div>
 
-<br>
+  <div id="relayFormula" hidden>
+    <p><strong>Relay Pumping Formula</strong></p>
+    <p>Relay PDP = relay friction loss + receiving engine residual + appliance/elevation loss.</p>
+  </div>
 
-<p><strong>Relay Pumping Formula</strong></p>
-<p>Relay PDP = relay friction loss + receiving engine residual + appliance/elevation loss.</p>
+  <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
 
-<br>
+  <p><strong>Default Coefficients</strong></p>
 
-<p><strong>Default Coefficients</strong></p>
-<p>
-1.75” = 15.5,
-1.88” = 8,
-2” = 4,
-2.25” = 3,
-2.5” = 2,
-3” = 0.8,
-Dual 3” = 0.4,
-4” = 0.2,
-5” = 0.08
-</p>
-    </section>
+  <p>
+    1.75” = 15.5,
+    1.88” = 8,
+    2” = 4,
+    2.25” = 3,
+    2.5” = 2,
+    3” = 0.8,
+    Dual 3” = 0.4,
+    4” = 0.2,
+    5” = 0.08
+  </p>
+
+</section>
 
     <section class="card">
       <details class="about">
         <summary>About / How to Use</summary>
         <p><strong>Reverse Flow Mode</strong> Estimates GPM by working backwards using PDP, Nozzle Pressure, and Friction Loss.</p>
-        <p><strong>Required PDP Mode</strong> Calculates the pump discharge pressure needed to achieve a target GPM.
-        </p><strong>Relay Pumping Mode</strong> Calculates the required PDP for a relay pumper to supply a receiving unit with specific target flow.
+        <p><strong>Required PDP Mode</strong> Calculates the pump discharge pressure needed to achieve a target GPM.</p>
+        <p><strong>Relay Pumping Mode</strong> Calculates the required PDP for a relay pumper to supply a receiving unit with a specific target flow.</p>
         <p>For smoothbore calculations, select the tip size manually when in PDP mode. Smoothbore nozzle pressures will be calculated automatically in Reverse Flow mode.</p>
         <p>This calculator is intended for training and reference. Always follow local pump charts, equipment testing, department policy, and instructor guidance.</p>
       </details>
     </section>
 
+    <div id="proModal" class="pro-modal" hidden>
+  <div class="pro-modal-content">
+
+    <div class="pro-modal-header">
+     <div class="badge beta">
+  PRO ACCESS
+</div> 
+      <h2>Reverse Flow PRO</h2>
+      <button id="closeProModal" class="modal-close-button" type="button">
+  ✕
+</button>
+    </div>
+
+    <p class="pro-modal-subtitle">
+      Advanced hydraulic modules built for professional fireground operations.
+    </p>
+
+    <div class="pro-feature-list">
+  <div>✓ Advanced Calculations</div>
+  <div>✓ Equipment Catalogs</div>
+  <div>✓ PRO Customization</div>
+  <div>✓ Future Module Access</div>
+</div>
+
+    <div class="pro-modal-footer">
+  <strong>One-time purchase.</strong>
+  No subscription. Lifetime access to all future PRO modules.
+</div>
+
+  </div>
+</div>
+    
     <p class="version-footer" id="versionFooter"></p>
   </main>
 
@@ -645,13 +1012,83 @@ Dual 3” = 0.4,
   ========================================= -->
   <script>
     // ========================================
-    // APP CONFIG
-    // ========================================
-    const APP_VERSION = "3.4.0-beta-relay";
-    const STORAGE_KEY = "reverse-flow-calculator-v3";
-    const PRESETS_KEY = "reverse-flow-calculator-presets-v1";
+// APP CONFIG
+// ========================================
 
-    console.log(`Reverse Flow Calculator v${APP_VERSION}`);
+const APP_VERSION = "3.5.0-beta-pro-framework";
+
+const STORAGE_KEY = "reverse-flow-calculator-v3";
+const PRESETS_KEY = "reverse-flow-calculator-presets-v1";
+
+// ========================================
+// ACCESS CONTROL
+// ========================================
+
+const ACCESS_LEVELS = {
+  BASIC: "basic",
+  PRO: "pro",
+  PRO_COMPED: "pro_comped"
+};
+
+// Beta testers default to PRO access for now
+let userAccessLevel = ACCESS_LEVELS.PRO_COMPED;
+
+function isProUser() {
+  return (
+    userAccessLevel === ACCESS_LEVELS.PRO ||
+    userAccessLevel === ACCESS_LEVELS.PRO_COMPED
+  );
+}
+
+// ========================================
+// FEATURE DEFINITIONS
+// ========================================
+
+const FEATURES = {
+  reverseFlow: {
+    name: "Reverse Flow",
+    access: ACCESS_LEVELS.BASIC
+  },
+
+  requiredPdp: {
+    name: "Required PDP",
+    access: ACCESS_LEVELS.BASIC
+  },
+
+  relayPumping: {
+    name: "Relay Pumping",
+    access: ACCESS_LEVELS.BASIC
+  },
+
+  splitLay: {
+    name: "Split Lay",
+    access: ACCESS_LEVELS.PRO
+  },
+
+  equipmentCatalog: {
+    name: "Equipment Catalog",
+    access: ACCESS_LEVELS.PRO
+  },
+
+  departmentProfiles: {
+    name: "Department Profiles",
+    access: ACCESS_LEVELS.PRO
+  }
+};
+
+function canAccessFeature(featureKey) {
+  const feature = FEATURES[featureKey];
+
+  if (!feature) return false;
+
+  if (feature.access === ACCESS_LEVELS.BASIC) {
+    return true;
+  }
+
+  return isProUser();
+}
+
+console.log(`Reverse Flow Calculator v${APP_VERSION}`);
 
     // ========================================
     // HYDRAULIC DATA
@@ -702,6 +1139,18 @@ Dual 3” = 0.4,
       nozzlePressure: "55",
       smoothboreTip: "",
       applianceLoss: "0",
+      splitLay: {
+      supplyLength: "",
+      supplyHoseSize: "3",
+      appliance: "gatedWye",
+      attackLines: "1",
+      attackLength: "",
+      attackHoseSize: "1.75",
+      attackNozzleType: "fog",
+      attackNozzlePressure: "50",
+      attackFlow: "",
+      attackSmoothboreTip: ""
+    },
       useCustomCoefficient: false,
       customCoefficient: "",
     };
@@ -759,6 +1208,13 @@ Dual 3” = 0.4,
       setupDisplay: document.getElementById("setupDisplay"),
       warningsCard: document.getElementById("warningsCard"),
 
+      splitLayButton: document.getElementById("splitLayButton"),
+      proModal: document.getElementById("proModal"),
+      closeProModal: document.getElementById("closeProModal"),
+      reverseFormula: document.getElementById("reverseFormula"),
+      requiredPdpFormula: document.getElementById("requiredPdpFormula"),
+      relayFormula: document.getElementById("relayFormula"),
+      
       versionFooter: document.getElementById("versionFooter"),
     };
 
@@ -768,16 +1224,38 @@ Dual 3” = 0.4,
     init();
 
     function init() {
-      els.versionFooter.textContent = `Reverse Flow Calculator v${APP_VERSION}`;
+  els.versionFooter.textContent = `Reverse Flow Calculator v${APP_VERSION}`;
+  state = { ...DEFAULT_STATE };
+  localStorage.removeItem(STORAGE_KEY);
+  updateAccessBadge();
 
-      populateHoseOptions();
-      populateSmoothboreTips();
-      renderPresetOptions();
-      syncInputsFromState();
-      renderPressureButtons();
-      calculateAndRender();
-      bindEvents();
-    }
+  populateHoseOptions();
+  populateSmoothboreTips();
+  renderPresetOptions();
+  syncInputsFromState();
+  renderPressureButtons();
+  calculateAndRender();
+  bindEvents();
+}
+
+function updateAccessBadge() {
+
+  const badge = document.getElementById("accessBadge");
+
+  if (!badge) return;
+
+  if (userAccessLevel === ACCESS_LEVELS.PRO_COMPED) {
+    badge.textContent = "PRO BETA ACCESS";
+    return;
+  }
+
+  if (userAccessLevel === ACCESS_LEVELS.PRO) {
+    badge.textContent = "PRO";
+    return;
+  }
+
+  badge.textContent = "BASIC VERSION";
+}
 
     // ========================================
     // STORAGE
@@ -838,7 +1316,16 @@ Dual 3” = 0.4,
     }
 
     function renderPressureButtons() {
-      if (isRelayMode()) {
+  if (isSplitLayMode()) {
+    els.nozzlePressureLabel.closest(".field").style.display = "none";
+    els.pressureButtons.hidden = true;
+    els.pressureButtons.innerHTML = "";
+    els.calculatedNozzlePressure.hidden = true;
+    els.disabledPressureExplanations.hidden = true;
+    return;
+  }
+
+  if (isRelayMode()) {
   els.nozzlePressureLabel.closest(".field").style.display = "none";
   els.pressureButtons.hidden = true;
   els.pressureButtons.innerHTML = "";
@@ -927,6 +1414,7 @@ Dual 3” = 0.4,
       els.reverseModeButton.classList.toggle("active", isReverseMode());
       els.pdpModeButton.classList.toggle("active", isRequiredPdpMode());
       els.relayModeButton.classList.toggle("active",isRelayMode());
+      els.splitLayButton.classList.toggle("active", isSplitLayMode());
 
       els.pdpLabel.textContent =
         isRelayMode()
@@ -944,6 +1432,17 @@ Dual 3” = 0.4,
 
       els.pdp.disabled = smoothboreRequiredPdp;
 
+      els.pdp.closest(".field").style.display = isSplitLayMode() ? "none" : "";
+      els.hoseLength.closest(".field").style.display = isSplitLayMode() ? "none" : "";
+      els.hoseSize.closest(".field").style.display = isSplitLayMode() ? "none" : "";
+      
+      els.nozzleType.closest(".field").style.display =
+  (isSplitLayMode() || isRelayMode())
+    ? "none"
+    : "";
+      els.applianceLoss.closest(".field").style.display = "";
+      els.customCoefficient.closest(".field").style.display = isSplitLayMode() ? "none" : "";
+
       els.pdp.value =
         isRequiredPdpMode()
       ? getTargetFlowValue()
@@ -957,23 +1456,60 @@ document.querySelector('label[for="hoseSize"]').textContent =
 
 document.querySelector('label[for="applianceLoss"]').textContent =
   isRelayMode() ? "Appliance / Elevation / Intake Loss" : "Appliance / Elevation Loss";
+    if (isSplitLayMode()) {
 
-    els.modeHelper.textContent = isRelayMode()
-  ? "Relay Pumping: calculate the discharge pressure needed to supply a receiving engine."
-  : smoothboreRequiredPdp
-    ? "Required PDP: smoothbore target flow is calculated from tip size and nozzle pressure."
-    : isRequiredPdpMode()
-      ? "Required PDP: enter target GPM to calculate the needed pump pressure."
-      : "Reverse Flow: enter PDP to estimate GPM.";
+  document.documentElement.style.setProperty(
+    "--mode-glow",
+    "rgba(168, 85, 247, 0.38)"
+  );
+
+} else if (isRelayMode()) {
+
+  document.documentElement.style.setProperty(
+    "--mode-glow",
+    "rgba(59, 130, 246, 0.38)"
+  );
+
+} else if (isRequiredPdpMode()) {
+
+  document.documentElement.style.setProperty(
+    "--mode-glow",
+    "rgba(34, 197, 94, 0.36)"
+  );
+
+} else {
+
+  document.documentElement.style.setProperty(
+    "--mode-glow",
+    "rgba(234, 88, 12, 0.38)"
+  );
+
+}
+    els.modeHelper.textContent = isSplitLayMode()
+  ? "Split Lay: Calculate longer deployments using separate supply and attack sections joined by an appliance."
+  : isRelayMode()
+    ? "Relay Pumping: Calculate the discharge pressure needed to supply a receiving engine."
+    : smoothboreRequiredPdp
+      ? "Required PDP: Smoothbore target flow is calculated from tip size and nozzle pressure."
+      : isRequiredPdpMode()
+        ? "Required PDP: Enter target GPM to calculate the needed pump pressure."
+        : "Reverse Flow: enter PDP to estimate GPM.";
+
+      els.reverseFormula.hidden = !isReverseMode();
+      els.requiredPdpFormula.hidden = !isRequiredPdpMode();
+      els.relayFormula.hidden = !isRelayMode();
 
       els.primaryResultLabel.textContent =
-  isRelayMode()
-    ? "Relay PDP"
-    : isRequiredPdpMode()
-      ? "Required PDP"
-      : "Rounded Flow";
+  isSplitLayMode()
+    ? "Split Lay PDP"
+    : isRelayMode()
+      ? "Relay PDP"
+      : isRequiredPdpMode()
+        ? "Required PDP"
+        : "Rounded Flow";
+      
       els.primaryResultUnit.textContent =
-  isRelayMode() || isRequiredPdpMode()
+  isRelayMode() || isRequiredPdpMode() || isSplitLayMode()
     ? "PSI"
     : "GPM";
      if (isRelayMode()) {
@@ -984,20 +1520,25 @@ document.querySelector('label[for="applianceLoss"]').textContent =
   els.nozzleDisplayLabel.textContent = "Residual";
   els.reactionLabel.textContent = "Reserve";
   els.nozzleReaction.parentElement.style.display = isRelayMode() ? "none" : "";
-  els.setupLabel.textContent = "Relay Lay";
+  els.setupLabel.textContent = "Relay Distance";
 
 } else {
 
   els.calculatedLabel.textContent = "Calculated";
   els.totalFlLabel.textContent = "Total FL";
-  els.flPer100Label.textContent = "FL / 100'";
+  els.flPer100Label.textContent =
+  isSplitLayMode()
+    ? "FL Breakdown"
+    : "FL / 100'";
   els.nozzleDisplayLabel.textContent = "Nozzle";
   els.reactionLabel.textContent = "Reaction";
   els.setupLabel.textContent = "Setup";
   els.nozzleReaction.parentElement.style.display = "";
 
 } 
-    els.nozzleType.closest(".field").style.display = "";
+    
+      els.nozzleType.closest(".field").style.display =
+  isSplitLayMode() ? "none" : "";
 els.nozzleTypeLabel.textContent = isRelayMode()
   ? "Receiving Engine Residual"
   : "Nozzle Type";
@@ -1016,13 +1557,35 @@ els.nozzleTypeLabel.textContent = isRelayMode()
   els.nozzleType.value = state.nozzleType;
 }
 
-els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none" : "";
+els.nozzlePressureLabel.closest(".field").style.display =
+  (isRelayMode() || isSplitLayMode())
+    ? "none"
+    : "";
 
-    }
+    const splitLayFields = document.getElementById("splitLayFields");
+    
+      if (splitLayFields) {
+  splitLayFields.style.display = isSplitLayMode() ? "flex" : "none";
+}
+      const splitTipField = document.getElementById("splitSmoothboreTipField");
+const splitFlowField = document.getElementById("splitAttackFlowField");
+const splitNozzleType = document.getElementById("splitAttackNozzleType");
 
-    function syncSmoothboreUi() {
+if (splitTipField && splitFlowField && splitNozzleType) {
+  const isSplitSmoothbore =
+    isSplitLayMode() && splitNozzleType.value === "smoothbore";
 
-  if (isRelayMode()) {
+  splitTipField.hidden = !isSplitSmoothbore;
+  splitTipField.style.display = isSplitSmoothbore ? "" : "none";
+
+  splitFlowField.style.display = isSplitSmoothbore ? "none" : "";
+}
+
+}
+
+function syncSmoothboreUi() {
+
+  if (isRelayMode() || isSplitLayMode()) {
     els.smoothboreTipField.hidden = true;
     els.smoothboreTipField.style.display = "none";
     return;
@@ -1059,8 +1622,33 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
       els.resetButton.addEventListener("click", resetCalculator);
 
       els.reverseModeButton.addEventListener("click", () => setMode("reverse"));
-      els.pdpModeButton.addEventListener("click", () => setMode("requiredPdp"));
-      els.relayModeButton.addEventListener("click", () => setMode("relay"));
+els.pdpModeButton.addEventListener("click", () => setMode("requiredPdp"));
+els.relayModeButton.addEventListener("click", () => setMode("relay"));
+
+els.splitLayButton.addEventListener("click", () => {
+  if (!canAccessFeature("splitLay")) {
+    els.proModal.hidden = false;
+    return;
+  }
+
+  setMode("splitLay");
+});
+
+els.closeProModal.addEventListener("click", () => {
+  els.proModal.hidden = true;
+});
+
+els.proModal.addEventListener("click", event => {
+  if (event.target === els.proModal) {
+    els.proModal.hidden = true;
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    els.proModal.hidden = true;
+  }
+});
 
       ["pdp", "hoseLength", "applianceLoss"].forEach(id => {
         els[id].addEventListener("input", e => handleWholeNumberInput(id, e.target));
@@ -1104,6 +1692,155 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
         renderPressureButtons();
         updateCalculator();
       });
+      document.getElementById("splitAttackNozzleType")?.addEventListener("change", e => {
+
+  const pressureSelect = document.getElementById("splitAttackNozzlePressure");
+  const tipField = document.getElementById("splitSmoothboreTipField");
+  const flowField = document.getElementById("splitAttackFlowField");
+
+  state.splitLay.attackNozzleType = e.target.value;
+
+  if (!pressureSelect || !tipField) return;
+
+  if (e.target.value === "smoothbore") {
+
+  pressureSelect.innerHTML = `
+    <option value="40">40 psi</option>
+    <option value="50">50 psi</option>
+    <option value="60">60 psi</option>
+  `;
+
+  state.splitLay.attackNozzlePressure = "50";
+  pressureSelect.value = "50";
+
+  tipField.hidden = false;
+  tipField.style.display = "";
+
+  flowField.style.display = "none";
+
+} else {
+
+  pressureSelect.innerHTML = `
+    <option value="50">50 psi</option>
+    <option value="55">55 psi</option>
+    <option value="75">75 psi</option>
+    <option value="100">100 psi</option>
+  `;
+
+  state.splitLay.attackNozzlePressure = "50";
+  pressureSelect.value = "50";
+
+  tipField.hidden = true;
+  tipField.style.display = "none";
+
+  flowField.style.display = "";
+
+}
+
+  saveState();
+  calculateAndRender();
+
+});
+
+      document.getElementById("splitAppliance")?.addEventListener("change", e => {
+
+  const attackLines = document.getElementById("splitAttackLines");
+
+  state.splitLay.appliance = e.target.value;
+
+  if (!attackLines) return;
+
+  if (e.target.value === "gateValve") {
+
+    attackLines.value = "1";
+    state.splitLay.attackLines = "1";
+
+    attackLines.querySelector('option[value="2"]').disabled = true;
+
+  } else {
+
+    attackLines.querySelector('option[value="2"]').disabled = false;
+
+  }
+
+  saveState();
+  calculateAndRender();
+
+});
+
+document.getElementById("splitAttackLines")?.addEventListener("change", e => {
+
+  state.splitLay.attackLines = e.target.value;
+
+  saveState();
+  calculateAndRender();
+
+});
+      document.getElementById("splitSupplyLength")?.addEventListener("input", e => {
+
+  state.splitLay.supplyLength = wholeNumber(e.target.value);
+  e.target.value = state.splitLay.supplyLength;
+
+  saveState();
+  calculateAndRender();
+
+});
+
+document.getElementById("splitSupplyHose")?.addEventListener("change", e => {
+
+  state.splitLay.supplyHoseSize = e.target.value;
+
+  saveState();
+  calculateAndRender();
+
+});
+
+document.getElementById("splitAttackLength")?.addEventListener("input", e => {
+
+  state.splitLay.attackLength = wholeNumber(e.target.value);
+  e.target.value = state.splitLay.attackLength;
+
+  saveState();
+  calculateAndRender();
+
+});
+
+document.getElementById("splitAttackHose")?.addEventListener("change", e => {
+
+  state.splitLay.attackHoseSize = e.target.value;
+
+  saveState();
+  calculateAndRender();
+
+});
+
+document.getElementById("splitAttackNozzlePressure")?.addEventListener("change", e => {
+
+  state.splitLay.attackNozzlePressure = e.target.value;
+
+  saveState();
+  calculateAndRender();
+
+});
+
+document.getElementById("splitAttackFlow")?.addEventListener("input", e => {
+
+  state.splitLay.attackFlow = wholeNumber(e.target.value);
+  e.target.value = state.splitLay.attackFlow;
+
+  saveState();
+  calculateAndRender();
+
+});
+
+document.getElementById("splitAttackSmoothboreTip")?.addEventListener("change", e => {
+
+  state.splitLay.attackSmoothboreTip = e.target.value;
+
+  saveState();
+  calculateAndRender();
+
+});
 
       els.coefficientToggle.addEventListener("click", () => {
         state.useCustomCoefficient = !state.useCustomCoefficient;
@@ -1137,7 +1874,7 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
     }
 
     function setMode(mode) {
-
+      
   state.mode = mode;
 
   // ========================================
@@ -1163,7 +1900,10 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
   // ========================================
   // STANDARD CALCULATOR DEFAULTS
   // ========================================
-
+  if (mode !== "splitLay") {
+  resetSplitLayInputs();
+}
+      
   if (mode === "reverse" || mode === "requiredPdp") {
 
     state.pdp = "";
@@ -1188,17 +1928,31 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
   syncSmoothboreUi();
   syncModeUi();
 
-  renderPressureButtons();
-  calculateAndRender();
+  
+      renderPressureButtons();
+calculateAndRender();
+
+els.presetSelect.value = "";
+els.presetSelect.selectedIndex = 0;
 }
 
     function resetCalculator() {
-      state = { ...DEFAULT_STATE };
-      localStorage.removeItem(STORAGE_KEY);
-      syncInputsFromState();
-      renderPressureButtons();
-      calculateAndRender();
-    }
+  state = { ...DEFAULT_STATE };
+  localStorage.removeItem(STORAGE_KEY);
+
+  [
+    "splitSupplyLength",
+    "splitAttackLength",
+    "splitAttackFlow"
+  ].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) input.value = "";
+  });
+
+  syncInputsFromState();
+  renderPressureButtons();
+  calculateAndRender();
+}
 
     // ========================================
     // PRESETS
@@ -1238,42 +1992,104 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
     }
 
     function buildPresetData() {
-      return {
-        hoseLength: state.hoseLength || "",
-        hoseSize: state.hoseSize || "",
-        nozzleType: state.nozzleType || "",
-        nozzlePressure: state.nozzlePressure || "",
-        smoothboreTip: state.smoothboreTip || "",
-        applianceLoss: state.applianceLoss || "0",
-        useCustomCoefficient: state.useCustomCoefficient || false,
-        customCoefficient: state.customCoefficient || "",
-      };
+  return {
+    mode: state.mode || "reverse",
+
+    hoseLength: state.hoseLength || "",
+    hoseSize: state.hoseSize || "",
+    nozzleType: state.nozzleType || "",
+    nozzlePressure: state.nozzlePressure || "",
+    smoothboreTip: state.smoothboreTip || "",
+
+    applianceLoss: state.applianceLoss || "0",
+
+    useCustomCoefficient:
+      state.useCustomCoefficient || false,
+
+    customCoefficient:
+      state.customCoefficient || "",
+
+    splitLay: {
+      ...state.splitLay
     }
+  };
+}
 
     function applyPreset(presetId) {
-      if (!presetId) return;
+  if (!presetId) return;
 
-      const presets = loadPresets();
-      const preset = presets.find(item => item.id === presetId);
-      if (!preset) return;
+  const presets = loadPresets();
+  const preset = presets.find(item => item.id === presetId);
+  if (!preset) return;
 
-      state = {
-        ...state,
-        hoseLength: preset.hoseLength || "",
-        hoseSize: preset.hoseSize || "",
-        nozzleType: preset.nozzleType || "",
-        nozzlePressure: preset.nozzlePressure || "",
-        smoothboreTip: preset.smoothboreTip || "",
-        applianceLoss: preset.applianceLoss || "0",
-        useCustomCoefficient: preset.useCustomCoefficient || false,
-        customCoefficient: preset.customCoefficient || "",
-      };
+  state = {
+  ...state,
 
-      saveState();
-      syncInputsFromState();
-      renderPressureButtons();
-      calculateAndRender();
-    }
+  mode: preset.mode || state.mode,
+
+  hoseLength: preset.hoseLength || "",
+  hoseSize: preset.hoseSize || "1.88",
+
+  nozzleType: preset.nozzleType || "fog",
+
+  nozzlePressure:
+    preset.nozzlePressure || "55",
+
+  smoothboreTip:
+    preset.smoothboreTip || "",
+
+  applianceLoss:
+    preset.applianceLoss || "0",
+
+  useCustomCoefficient:
+    preset.useCustomCoefficient || false,
+
+  customCoefficient:
+    preset.customCoefficient || "",
+
+  splitLay: {
+    ...DEFAULT_STATE.splitLay,
+    ...(preset.splitLay || {})
+  }
+};
+
+  populateHoseOptions();
+  saveState();
+  syncInputsFromState();
+      document.getElementById("splitSupplyLength").value =
+  state.splitLay.supplyLength || "";
+
+document.getElementById("splitSupplyHose").value =
+  state.splitLay.supplyHoseSize || "3";
+
+document.getElementById("splitAppliance").value =
+  state.splitLay.appliance || "gatedWye";
+
+document.getElementById("splitAttackLines").value =
+  state.splitLay.attackLines || "1";
+
+document.getElementById("splitAttackLength").value =
+  state.splitLay.attackLength || "";
+
+document.getElementById("splitAttackHose").value =
+  state.splitLay.attackHoseSize || "1.75";
+
+document.getElementById("splitAttackNozzleType").value =
+  state.splitLay.attackNozzleType || "fog";
+
+document.getElementById("splitAttackNozzlePressure").value =
+  state.splitLay.attackNozzlePressure || "50";
+
+document.getElementById("splitAttackFlow").value =
+  state.splitLay.attackFlow || "";
+
+document.getElementById("splitAttackSmoothboreTip").value =
+  state.splitLay.attackSmoothboreTip || "";
+  syncSmoothboreUi();
+  syncModeUi();
+  renderPressureButtons();
+  calculateAndRender();
+}
 
     function deleteSelectedPreset() {
       const selectedId = els.presetSelect.value;
@@ -1306,7 +2122,14 @@ els.nozzlePressureLabel.closest(".field").style.display = isRelayMode() ? "none"
 
       setResult("—", "—", "—", "—", getNozzleDisplay(), getSetupDisplay());
 
-      if (isRelayMode()) {
+      
+      
+      if (isSplitLayMode()) {
+  calculateSplitLay(warnings);
+  return;
+}
+
+if (isRelayMode()) {
   calculateRelayPdp({ ...inputs, warnings });
   return;
 }
@@ -1518,11 +2341,201 @@ function calculateRelayPdp({
     `${Math.round(totalFrictionLoss)} psi`,
     `${Math.round(frictionLossPer100)} psi`,
     `${residualPressure} psi residual`,
-    `${hoseLength}' relay lay`,
+    `${hoseLength}' Relay Distance`,
     "—"
   );
 
   renderWarnings(warnings);
+}
+    // ========================================
+// SPLIT LAY CALCULATIONS
+// ========================================
+
+function calculateSplitLay(warnings) {
+
+  const supplyLength =
+    numberOrNull(state.splitLay.supplyLength);
+
+  const attackLength =
+    numberOrNull(state.splitLay.attackLength);
+
+  const attackLines =
+  parseInt(state.splitLay.attackLines, 10) || 1;
+
+  const applianceLoss =
+    numberOrNull(state.applianceLoss) || 0;
+
+  const supplyHose =
+    HOSE_OPTIONS.find(
+      hose => hose.id === state.splitLay.supplyHoseSize
+    );
+
+  const attackHose =
+    HOSE_OPTIONS.find(
+      hose => hose.id === state.splitLay.attackHoseSize
+    );
+
+  if (
+    !supplyHose ||
+    !attackHose ||
+    supplyLength === null ||
+    attackLength === null
+  ) {
+    renderWarnings(warnings);
+    return;
+  }
+
+  let attackFlow = 0;
+
+  // ========================================
+  // FOG NOZZLE FLOW
+  // ========================================
+
+  if (state.splitLay.attackNozzleType === "fog") {
+
+    attackFlow =
+      numberOrNull(state.splitLay.attackFlow);
+
+    if (!attackFlow) {
+      warnings.push("Enter target attack flow.");
+      renderWarnings(warnings);
+      return;
+    }
+
+  }
+
+  // ========================================
+  // SMOOTHBORE FLOW
+  // ========================================
+
+  else {
+
+    const tip =
+      SMOOTHBORE_TIPS.find(
+        item =>
+          item.id === state.splitLay.attackSmoothboreTip
+      );
+
+    const nozzlePressure =
+      numberOrNull(
+        state.splitLay.attackNozzlePressure
+      );
+
+    if (!tip || nozzlePressure === null) {
+      warnings.push("Select smoothbore tip and nozzle pressure.");
+      renderWarnings(warnings);
+      return;
+    }
+
+    attackFlow = smoothboreGpm(
+      tip.diameter,
+      nozzlePressure
+    );
+
+  }
+
+  const nozzlePressure =
+    numberOrNull(
+      state.splitLay.attackNozzlePressure
+    ) || 0;
+
+  const attackQ = attackFlow / 100;
+
+  const attackFlPer100 =
+    attackHose.coefficient *
+    attackQ *
+    attackQ;
+
+  const attackTotalFl =
+    attackFlPer100 *
+    (attackLength / 100);
+
+  const totalSupplyFlow =
+    attackFlow * attackLines;
+
+  let automaticApplianceLoss = 0;
+
+if (
+  (
+    state.splitLay.appliance === "gatedWye" ||
+    state.splitLay.appliance === "gateValve"
+  ) &&
+  totalSupplyFlow > 350
+) {
+  automaticApplianceLoss = 10;
+}
+
+if (state.splitLay.appliance === "standpipe") {
+  automaticApplianceLoss = 25;
+}
+  if (automaticApplianceLoss > 0) {
+
+  warnings.push(
+    `${automaticApplianceLoss} psi automatic appliance loss added for ${state.splitLay.appliance === "standpipe"
+      ? "standpipe operations"
+      : "flow greater than 350 GPM"}`
+  );
+
+}
+
+  const supplyQ =
+    totalSupplyFlow / 100;
+
+  const supplyFlPer100 =
+    supplyHose.coefficient *
+    supplyQ *
+    supplyQ;
+
+  const supplyTotalFl =
+    supplyFlPer100 *
+    (supplyLength / 100);
+
+  const totalPdp =
+  nozzlePressure +
+  attackTotalFl +
+  supplyTotalFl +
+  applianceLoss +
+  automaticApplianceLoss;
+    const nozzleReaction =
+  state.splitLay.attackNozzleType === "smoothbore"
+    ? (() => {
+        const tip = SMOOTHBORE_TIPS.find(
+          item => item.id === state.splitLay.attackSmoothboreTip
+        );
+
+        if (!tip) return "—";
+
+        return `${Math.round(
+          1.57 * tip.diameter * tip.diameter * nozzlePressure
+        )} lb`;
+      })()
+    : `${Math.round(
+        0.0505 * attackFlow * Math.sqrt(nozzlePressure)
+      )} lb`;
+
+  
+  setResult(
+  Math.round(totalPdp),
+
+  `${Math.round(totalSupplyFlow)} GPM`,
+
+  `${Math.round(
+    attackTotalFl + supplyTotalFl
+  )} psi total`,
+
+  `${Math.round(supplyTotalFl)} supply / ${Math.round(
+    attackTotalFl
+  )} attack`,
+
+  `${Math.round(attackFlow)} GPM / line`,
+
+  `${attackLines} Attack Line(s)`,
+
+  nozzleReaction
+);
+
+  renderWarnings(warnings);
+
 }
     // ========================================
     // VALIDATION
@@ -1647,6 +2660,10 @@ function calculateRelayPdp({
       return state.mode === "relay";
     }
 
+    function isSplitLayMode() {
+      return state.mode === "splitLay";
+}
+
     function isSmoothbore() {
       return state.nozzleType === "smoothbore";
     }
@@ -1655,6 +2672,56 @@ function calculateRelayPdp({
       return isReverseMode() && isSmoothbore();
     }
 
+    // ========================================
+// SPLIT LAY RESET
+// ========================================
+
+function resetSplitLayInputs() {
+
+  state.splitLay = {
+    ...DEFAULT_STATE.splitLay
+  };
+
+  const fields = {
+    splitSupplyLength: "",
+    splitSupplyHose: DEFAULT_STATE.splitLay.supplyHoseSize,
+    splitAppliance: DEFAULT_STATE.splitLay.appliance,
+    splitAttackLines: DEFAULT_STATE.splitLay.attackLines,
+    splitAttackLength: "",
+    splitAttackHose: DEFAULT_STATE.splitLay.attackHoseSize,
+    splitAttackNozzleType: DEFAULT_STATE.splitLay.attackNozzleType,
+    splitAttackNozzlePressure: DEFAULT_STATE.splitLay.attackNozzlePressure,
+    splitAttackFlow: "",
+    splitAttackSmoothboreTip: DEFAULT_STATE.splitLay.attackSmoothboreTip
+  };
+
+  Object.entries(fields).forEach(([id, value]) => {
+
+    const el = document.getElementById(id);
+
+    if (el) {
+      el.value = value;
+    }
+
+  });
+
+  const splitTipField =
+    document.getElementById("splitSmoothboreTipField");
+
+  const splitFlowField =
+    document.getElementById("splitAttackFlowField");
+
+  if (splitTipField) {
+    splitTipField.hidden = true;
+    splitTipField.style.display = "none";
+  }
+
+  if (splitFlowField) {
+    splitFlowField.style.display = "";
+  }
+
+}
+    
     // ========================================
     // GENERAL UTILITIES
     // ========================================
