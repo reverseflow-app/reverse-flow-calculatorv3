@@ -1876,7 +1876,6 @@ document.getElementById("splitAttackSmoothboreTip")?.addEventListener("change", 
     function setMode(mode) {
       
   state.mode = mode;
-      els.presetSelect.value = "";
 
   // ========================================
   // RELAY MODE DEFAULTS
@@ -1929,8 +1928,12 @@ document.getElementById("splitAttackSmoothboreTip")?.addEventListener("change", 
   syncSmoothboreUi();
   syncModeUi();
 
-  renderPressureButtons();
-  calculateAndRender();
+  
+      renderPressureButtons();
+calculateAndRender();
+
+els.presetSelect.value = "";
+els.presetSelect.selectedIndex = 0;
 }
 
     function resetCalculator() {
