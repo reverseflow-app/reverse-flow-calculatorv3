@@ -1370,11 +1370,16 @@ function updateAccessBadge() {
         state.nozzlePressure === "custom";
 
       els.customNozzlePressureField.hidden =
-        !usingCustomPressure;
+  !usingCustomPressure;
 
-      if (usingCustomPressure) {
-        els.customNozzlePressure.value =
-          state.customNozzlePressure || "";
+els.customNozzlePressure.disabled =
+  !usingCustomPressure;
+
+if (usingCustomPressure) {
+  els.customNozzlePressure.value =
+    state.customNozzlePressure || "";
+} else {
+  els.customNozzlePressure.value = "";
 }
 
       const pressures = NOZZLE_PRESSURES[state.nozzleType];
@@ -1397,9 +1402,11 @@ function updateAccessBadge() {
           if (button.disabled) return;
 
           state.nozzlePressure = button.dataset.pressure;
+          
           if (button.dataset.pressure !== "custom") {
-  state.customNozzlePressure = "";
-}
+          state.customNozzlePressure = "";
+          els.customNozzlePressure.value = "";
+    }
           syncCalculatedSmoothboreTargetFlow();
           saveState();
           syncModeUi();
@@ -1706,8 +1713,9 @@ document.addEventListener("keydown", event => {
       });
 
       els.nozzleType.addEventListener("change", e => {
-  state.nozzleType = e.target.value;
-        state.customNozzlePressure = "";
+      state.nozzleType = e.target.value;
+      state.customNozzlePressure = "";
+      els.customNozzlePressure.value = "";
 
   if (isRelayMode()) {
     saveState();
