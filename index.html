@@ -636,8 +636,7 @@ button:active:not(:disabled) {
 }
   </style>
 </head>
-
-<body>
+  
   <body>
   <header class="app-header">
     <div class="app-header-inner">
@@ -1012,7 +1011,7 @@ Select a hydraulic calculation mode.
 // APP CONFIG
 // ========================================
 
-const APP_VERSION = "3.5.1-pro-beta";
+const APP_VERSION = "3.5.3-pro-beta";
 
 const STORAGE_KEY = "reverse-flow-calculator-v3";
 const PRESETS_KEY = "reverse-flow-calculator-presets-v1";
@@ -1053,9 +1052,9 @@ const FEATURES = {
   },
 
   relayPumping: {
-    name: "Relay Pumping",
-    access: ACCESS_LEVELS.BASIC
-  },
+  name: "Relay Pumping",
+  access: ACCESS_LEVELS.PRO
+},
 
   splitLay: {
     name: "Split Lay",
@@ -1621,11 +1620,6 @@ els.pdpModeButton.addEventListener("click", () => setMode("requiredPdp"));
 els.relayModeButton.addEventListener("click", () => setMode("relay"));
 
 els.splitLayButton.addEventListener("click", () => {
-  if (!canAccessFeature("splitLay")) {
-    els.proModal.hidden = false;
-    return;
-  }
-
   setMode("splitLay");
 });
 
