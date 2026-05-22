@@ -802,7 +802,7 @@ Select a hydraulic calculation mode.
 </div>
 
 <div class="field">
-  <label>Attack Nozzle</label>
+  <label>Attack Nozzle Style</label>
   <select id="splitAttackNozzleType">
     <option value="fog">Fog</option>
     <option value="smoothbore">Smoothbore</option>
@@ -870,11 +870,14 @@ Select a hydraulic calculation mode.
         </div>
 
         <div class="field">
-          <label for="nozzleType" id="nozzleTypeLabel">Nozzle Type</label>
+          <label for="nozzleType" id="nozzleTypeLabel">Nozzle Style</label>
           <select id="nozzleType">
             <option value="fog">Fog</option>
             <option value="smoothbore">Smoothbore</option>
           </select>
+          <p class="helper">
+  Only nozzle style, nozzle pressure, and hose coefficient matter for these calculations.
+</p>
         </div>
 
         <div id="smoothboreTipField" class="field full" hidden>
@@ -1009,7 +1012,14 @@ Select a hydraulic calculation mode.
         <p><strong>Required PDP Mode</strong> Calculates the pump discharge pressure needed to achieve a target GPM.</p>
         <p><strong>Relay Pumping Mode</strong> Calculates the required PDP for a relay pumper to supply a receiving unit with a specific target flow.</p>
         <p>For smoothbore calculations, select the tip size manually when in PDP mode. Smoothbore nozzle pressures will be calculated automatically in Reverse Flow mode.</p>
+        <p>
+  Actual pump discharge pressure may vary due to internal plumbing configurations, apparatus piping layouts, valves, devices, and other system-specific restrictions not automatically accounted for by the calculators.
+</p>
+        <p>
+  For the best experience and automatic updates, save the app to your device’s home screen.
+</p>
         <p>This calculator is intended for training and reference. Always follow local pump charts, equipment testing, department policy, and instructor guidance.</p>
+        
       </details>
     </section>
 
@@ -1581,7 +1591,7 @@ document.querySelector('label[for="applianceLoss"]').textContent =
   isSplitLayMode() ? "none" : "";
 els.nozzleTypeLabel.textContent = isRelayMode()
   ? "Receiving Engine Residual"
-  : "Nozzle Type";
+  : "Nozzle Style";
       if (isRelayMode()) {
   els.nozzleType.innerHTML = `
     <option value="20">20 psi</option>
