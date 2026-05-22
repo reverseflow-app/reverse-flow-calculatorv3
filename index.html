@@ -2285,7 +2285,7 @@ calculateReverseFlow({ ...inputs, warnings });
       const nozzleReaction = calculateNozzleReaction(calculatedGpm, nozzlePressure);
 
       if (roundedGpm > selectedHose.maxReferenceFlow) {
-        warnings.push(`Rounded flow exceeds the pump-chart reference range for ${selectedHose.chartName} hose.`);
+        warnings.push(`Rounded flow is above the normal reference range for ${selectedHose.chartName} hose. Confirm with department-approved flow testing or local operating guidance.`);
       }
 
       setResult(
@@ -2354,7 +2354,7 @@ calculateReverseFlow({ ...inputs, warnings });
       const nozzleReaction = calculateNozzleReaction(targetGpm, nozzlePressure);
 
       if (targetGpm > selectedHose.maxReferenceFlow) {
-        warnings.push(`Target flow exceeds the pump-chart reference range for ${selectedHose.chartName} hose.`);
+        warnings.push(`Target flow is above the normal reference range for ${selectedHose.chartName} hose. Confirm with department-approved flow testing or local operating guidance.`);
       }
 
       setResult(
