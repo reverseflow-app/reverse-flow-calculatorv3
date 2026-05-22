@@ -757,7 +757,7 @@ Select a hydraulic calculation mode.
 </div>
 
 <div class="field">
-  <label>Attack Nozzle</label>
+  <label>Attack Nozzle Style</label>
   <select id="splitAttackNozzleType">
     <option value="fog">Fog</option>
     <option value="smoothbore">Smoothbore</option>
@@ -825,11 +825,14 @@ Select a hydraulic calculation mode.
         </div>
 
         <div class="field">
-          <label for="nozzleType" id="nozzleTypeLabel">Nozzle Type</label>
+          <label for="nozzleType" id="nozzleTypeLabel">Nozzle Style</label>
           <select id="nozzleType">
             <option value="fog">Fog</option>
             <option value="smoothbore">Smoothbore</option>
           </select>
+          <p class="helper">
+  Only nozzle style, nozzle pressure, and hose coefficient matter for these calculations.
+</p>
         </div>
 
         <div id="smoothboreTipField" class="field full" hidden>
@@ -841,7 +844,6 @@ Select a hydraulic calculation mode.
         <div class="field full">
           <label id="nozzlePressureLabel">Nozzle Pressure</label>
           <div id="pressureButtons" class="pressure-buttons"></div>
-          <div
   
             <div
   id="customNozzlePressureField"
@@ -981,6 +983,13 @@ Select a hydraulic calculation mode.
         <p><strong>Required PDP Mode</strong> Calculates the pump discharge pressure needed to achieve a target GPM.</p>
         <p><strong>Relay Pumping Mode</strong> Calculates the required PDP for a relay pumper to supply a receiving unit with a specific target flow.</p>
         <p>For smoothbore calculations, select the tip size manually when in PDP mode. Smoothbore nozzle pressures will be calculated automatically in Reverse Flow mode.</p>
+        <p>
+  Actual pump discharge pressure may vary due to internal plumbing configurations, apparatus piping layouts, valves, devices, and other system-specific restrictions not automatically accounted for by the calculators.
+</p>
+
+<p>
+  For the best experience and automatic updates, save the app to your device’s home screen.
+</p>
         <p>This calculator is intended for training and reference. Always follow local pump charts, equipment testing, department policy, and instructor guidance.</p>
       </details>
     </section>
@@ -1028,8 +1037,8 @@ Select a hydraulic calculation mode.
 // APP CONFIG
 // ========================================
 
-const APP_VERSION = "3.6.0-pro-beta";
-    const BUILD_DATE = "2026-05-21";
+const APP_VERSION = "3.6.1-pro-beta";
+    const BUILD_DATE = "2026-05-22";
 
 const STORAGE_KEY = "reverse-flow-calculator-v3";
 const PRESETS_KEY = "reverse-flow-calculator-presets-v1";
@@ -1594,7 +1603,7 @@ document.querySelector('label[for="applianceLoss"]').textContent =
   isSplitLayMode() ? "none" : "";
 els.nozzleTypeLabel.textContent = isRelayMode()
   ? "Receiving Engine Residual"
-  : "Nozzle Type";
+  : "Nozzle Style";
       if (isRelayMode()) {
   els.nozzleType.innerHTML = `
     <option value="10">10 psi</option>
@@ -1938,6 +1947,7 @@ document.getElementById("splitAttackSmoothboreTip")?.addEventListener("change", 
     function setMode(mode) {
       
   state.mode = mode;
+      state.customNozzlePressure = "";
 
   // ========================================
   // RELAY MODE DEFAULTS
@@ -1999,6 +2009,9 @@ els.presetSelect.selectedIndex = 0;
 }
 
     function resetCalculator() {
+      
+      state.customNozzlePressure = "";
+      els.customNozzlePressure.value = "";
 
   [
     "splitSupplyLength",
