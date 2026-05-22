@@ -222,7 +222,7 @@ button:active:not(:disabled) {
 }
 
 .pressure-buttons {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
 }
 
     .mode-buttons button {
@@ -232,7 +232,7 @@ button:active:not(:disabled) {
 }
 
     .pressure-buttons {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     }
 
     .mode-card-pro {
@@ -841,6 +841,23 @@ Select a hydraulic calculation mode.
         <div class="field full">
           <label id="nozzlePressureLabel">Nozzle Pressure</label>
           <div id="pressureButtons" class="pressure-buttons"></div>
+          <div
+  
+            <div
+  id="customNozzlePressureField"
+  class="field"
+  hidden
+>
+  <label for="customNozzlePressure">
+    Custom Nozzle Pressure
+  </label>
+
+  <input
+    id="customNozzlePressure"
+    inputmode="numeric"
+    placeholder="Enter custom nozzle pressure"
+  />
+</div>
 
           <div id="calculatedNozzlePressure" class="calculated-pressure-card" hidden>
             <span class="helper">Calculated highest achievable nozzle pressure</span>
@@ -1011,7 +1028,7 @@ Select a hydraulic calculation mode.
 // APP CONFIG
 // ========================================
 
-const APP_VERSION = "3.5.4-pro-beta";
+const APP_VERSION = "3.6.0-pro-beta";
     const BUILD_DATE = "2026-05-21";
 
 const STORAGE_KEY = "reverse-flow-calculator-v3";
@@ -1109,9 +1126,9 @@ console.log(`Reverse Flow Calculator v${APP_VERSION}`);
     ];
 
     const NOZZLE_PRESSURES = {
-      fog: [50, 55, 75, 100],
-      smoothbore: [40, 50, 60, 80],
-    };
+  fog: [50, 55, 75, 100, "custom"],
+  smoothbore: [40, 50, 60, 80],
+};
 
     const SMOOTHBORE_TIPS = [
       { id: '3/4', label: '3/4"', diameter: 0.75 },
@@ -1134,6 +1151,7 @@ console.log(`Reverse Flow Calculator v${APP_VERSION}`);
       hoseSize: "1.88",
       nozzleType: "fog",
       nozzlePressure: "55",
+      customNozzlePressure: "",
       smoothboreTip: "",
       applianceLoss: "0",
       splitLay: {
@@ -1182,6 +1200,13 @@ console.log(`Reverse Flow Calculator v${APP_VERSION}`);
       calculatedNozzlePressure: document.getElementById("calculatedNozzlePressure"),
       calculatedNozzlePressureValue: document.getElementById("calculatedNozzlePressureValue"),
       disabledPressureExplanations: document.getElementById("disabledPressureExplanations"),
+
+      
+      customNozzlePressureField:
+        document.getElementById("customNozzlePressureField"),
+
+      customNozzlePressure:
+        document.getElementById("customNozzlePressure"),
 
       applianceLoss: document.getElementById("applianceLoss"),
       coefficientToggle: document.getElementById("coefficientToggle"),
@@ -1341,11 +1366,30 @@ function updateAccessBadge() {
       els.disabledPressureExplanations.hidden = true;
       els.disabledPressureExplanations.innerHTML = "";
 
+      const usingCustomPressure =
+        state.nozzlePressure === "custom";
+
+      els.customNozzlePressureField.hidden =
+        !usingCustomPressure;
+
+      if (usingCustomPressure) {
+        els.customNozzlePressure.value =
+          state.customNozzlePressure || "";
+}
+
       const pressures = NOZZLE_PRESSURES[state.nozzleType];
 
       els.pressureButtons.innerHTML = pressures.map(pressure => {
         const isActive = state.nozzlePressure === String(pressure);
-        return `<button type="button" data-pressure="${pressure}" class="${isActive ? "active" : ""}">${pressure} psi</button>`;
+        return `
+<button
+  type="button"
+  data-pressure="${pressure}"
+  class="${isActive ? "active" : ""}"
+>
+  ${pressure === "custom" ? "Custom NP" : `${pressure} psi`}
+</button>
+`;
       }).join("");
 
       els.pressureButtons.querySelectorAll("button").forEach(button => {
@@ -1353,6 +1397,9 @@ function updateAccessBadge() {
           if (button.disabled) return;
 
           state.nozzlePressure = button.dataset.pressure;
+          if (button.dataset.pressure !== "custom") {
+  state.customNozzlePressure = "";
+}
           syncCalculatedSmoothboreTargetFlow();
           saveState();
           syncModeUi();
@@ -1540,6 +1587,7 @@ els.nozzleTypeLabel.textContent = isRelayMode()
   : "Nozzle Type";
       if (isRelayMode()) {
   els.nozzleType.innerHTML = `
+    <option value="10">10 psi</option>
     <option value="20">20 psi</option>
     <option value="30">30 psi</option>
     <option value="40">40 psi</option>
@@ -1659,6 +1707,7 @@ document.addEventListener("keydown", event => {
 
       els.nozzleType.addEventListener("change", e => {
   state.nozzleType = e.target.value;
+        state.customNozzlePressure = "";
 
   if (isRelayMode()) {
     saveState();
@@ -1832,7 +1881,18 @@ document.getElementById("splitAttackSmoothboreTip")?.addEventListener("change", 
   calculateAndRender();
 
 });
+      els.customNozzlePressure.addEventListener("input", e => {
 
+  state.customNozzlePressure =
+    wholeNumber(e.target.value);
+
+  e.target.value =
+    state.customNozzlePressure;
+
+  updateCalculator();
+
+});
+      
       els.coefficientToggle.addEventListener("click", () => {
         state.useCustomCoefficient = !state.useCustomCoefficient;
 
@@ -2137,7 +2197,10 @@ calculateReverseFlow({ ...inputs, warnings });
         ? numberOrNull(state.customCoefficient)
         : selectedHose.coefficient;
 
-      let nozzlePressure = numberOrNull(state.nozzlePressure);
+      let nozzlePressure =
+  state.nozzlePressure === "custom"
+    ? numberOrNull(state.customNozzlePressure)
+    : numberOrNull(state.nozzlePressure);
 
       if (isReverseSmoothbore()) {
         nozzlePressure = calculateAchievableSmoothborePressure();
@@ -2559,9 +2622,17 @@ if (state.splitLay.appliance === "standpipe") {
     }
 
     function getSetupDisplay() {
-      const hose = getSelectedHose();
-      return `${state.hoseLength || "—"}' of ${hose.label}`;
-    }
+
+  const hose = getSelectedHose();
+
+  if (state.useCustomCoefficient && state.customCoefficient) {
+
+    return `${state.hoseLength || "—"}' of ${hose.label} • Custom C ${state.customCoefficient}`;
+
+  }
+
+  return `${state.hoseLength || "—"}' of ${hose.label}`;
+}
 
     function getNozzleDisplay() {
       if (isSmoothbore()) {
@@ -2573,7 +2644,12 @@ if (state.splitLay.appliance === "standpipe") {
         return `${tip ? tip.label : state.smoothboreTip} SB @ ${displayedPressure ?? "—"} psi`;
       }
 
-      return `Fog @ ${state.nozzlePressure} psi`;
+      const displayPressure =
+  state.nozzlePressure === "custom"
+    ? state.customNozzlePressure
+    : state.nozzlePressure;
+
+return `Fog @ ${displayPressure} psi`;
     }
 
     // ========================================
