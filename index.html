@@ -1372,6 +1372,9 @@ function updateAccessBadge() {
       els.customNozzlePressureField.hidden =
   !usingCustomPressure;
 
+      els.customNozzlePressureField.style.display =
+  usingCustomPressure ? "" : "none";
+
 els.customNozzlePressure.disabled =
   !usingCustomPressure;
 
