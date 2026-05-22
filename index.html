@@ -1037,7 +1037,7 @@ Select a hydraulic calculation mode.
 // APP CONFIG
 // ========================================
 
-const APP_VERSION = "3.6.1-pro-beta";
+const APP_VERSION = "3.6.2-pro-beta";
     const BUILD_DATE = "2026-05-22";
 
 const STORAGE_KEY = "reverse-flow-calculator-v3";
@@ -1719,10 +1719,10 @@ document.addEventListener("keydown", event => {
       });
 
       els.hoseSize.addEventListener("change", e => {
-        state.hoseSize = e.target.value;
-        syncCoefficientUi();
-        updateCalculator();
-      });
+  state.hoseSize = e.target.value;
+  clearCustomCoefficient();
+  updateCalculator();
+});
 
       els.nozzleType.addEventListener("change", e => {
       state.nozzleType = e.target.value;
@@ -1943,11 +1943,21 @@ document.getElementById("splitAttackSmoothboreTip")?.addEventListener("change", 
       renderPressureButtons();
       calculateAndRender();
     }
+    function clearCustomCoefficient() {
+  state.useCustomCoefficient = false;
+  state.customCoefficient = "";
 
+  if (els.customCoefficient) {
+    els.customCoefficient.value = "";
+  }
+
+  syncCoefficientUi();
+}
     function setMode(mode) {
       
   state.mode = mode;
-      state.customNozzlePressure = "";
+  state.customNozzlePressure = "";
+  clearCustomCoefficient();
 
   // ========================================
   // RELAY MODE DEFAULTS
@@ -2009,21 +2019,21 @@ els.presetSelect.selectedIndex = 0;
 }
 
     function resetCalculator() {
-      
-      state.customNozzlePressure = "";
-      els.customNozzlePressure.value = "";
+  state = {
+    ...DEFAULT_STATE,
+    splitLay: {
+      ...DEFAULT_STATE.splitLay
+    }
+  };
 
-  [
-    "splitSupplyLength",
-    "splitAttackLength",
-    "splitAttackFlow"
-  ].forEach(id => {
-    const input = document.getElementById(id);
-    if (input) input.value = "";
-  });
+  els.presetSelect.value = "";
+  els.presetSelect.selectedIndex = 0;
 
+  populateHoseOptions();
   syncInputsFromState();
+  resetSplitLayInputs();
   renderPressureButtons();
+  saveState();
   calculateAndRender();
 }
 
@@ -2275,7 +2285,7 @@ calculateReverseFlow({ ...inputs, warnings });
       const nozzleReaction = calculateNozzleReaction(calculatedGpm, nozzlePressure);
 
       if (roundedGpm > selectedHose.maxReferenceFlow) {
-        warnings.push(`Rounded flow exceeds the pump-chart reference range for ${selectedHose.chartName} hose.`);
+        warnings.push(`Rounded flow is above the normal reference range for ${selectedHose.chartName} hose. Confirm with department-approved flow testing or local operating guidance.`);
       }
 
       setResult(
@@ -2344,7 +2354,7 @@ calculateReverseFlow({ ...inputs, warnings });
       const nozzleReaction = calculateNozzleReaction(targetGpm, nozzlePressure);
 
       if (targetGpm > selectedHose.maxReferenceFlow) {
-        warnings.push(`Target flow exceeds the pump-chart reference range for ${selectedHose.chartName} hose.`);
+        warnings.push(`Target flow is above the normal reference range for ${selectedHose.chartName} hose. Confirm with department-approved flow testing or local operating guidance.`);
       }
 
       setResult(
