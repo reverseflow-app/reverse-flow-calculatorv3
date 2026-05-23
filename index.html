@@ -10,12 +10,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Reverse Flow" />
+  <meta name="application-name" content="Reverse Flow: Fireground Hydraulics" />
 
-  <link rel="apple-touch-icon" href="icon.png?v=3" />
-  <link rel="icon" type="image/png" href="icon.png?v=3" />
-  <link rel="manifest" href="manifest.json?v=3" />
+  <link rel="apple-touch-icon" href="icon.png?v=4" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icon.png?v=4" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4" />
+  <link rel="manifest" href="manifest.json?v=4" />
 
-  <title>Reverse Flow</title>
+  <title>Reverse Flow: Fireground Hydraulics</title>
 
   <!-- ========================================
        STYLES
@@ -537,12 +539,13 @@ button:active:not(:disabled) {
     }
 
     .version-footer {
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 8px 0 0;
-    }
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 0 0;
+  line-height: 1.5;
+}
 
     /* ---------- Dark Mode ---------- */
     @media (prefers-color-scheme: dark) {
@@ -1090,7 +1093,11 @@ Select a hydraulic calculation mode.
   </div>
 </div>
     
-    <p class="version-footer" id="versionFooter"></p>
+    <p class="version-footer">
+  Reverse Flow: Fireground Hydraulics © 2026
+</p>
+
+<p class="version-footer" id="versionFooter"></p>
   </main>
 
   <!-- ========================================
@@ -1249,10 +1256,17 @@ function isModifiedHoseCoefficient(hoseId) {
   return getActiveHoseCoefficient(hoseId) !== FACTORY_HOSE_COEFFS[hoseId];
 }
 
-    const NOZZLE_PRESSURES = {
-  fog: [50, 55, 75, 100, "custom"],
-  smoothbore: [40, 50, 60, 80],
-};
+    function getNozzlePressures() {
+
+  return {
+    fog: [50, 55, 75, 100, "custom"],
+
+    smoothbore: isReverseMode()
+      ? [40, 50, 60, 80]
+      : [40, 50, 60, 80, "custom"],
+  };
+
+}
 
     const SMOOTHBORE_TIPS = [
       { id: '3/4', label: '3/4"', diameter: 0.75 },
@@ -1555,7 +1569,7 @@ if (usingCustomPressure) {
   els.customNozzlePressure.value = "";
 }
 
-      const pressures = NOZZLE_PRESSURES[state.nozzleType];
+      const pressures = getNozzlePressures()[state.nozzleType];
 
       els.pressureButtons.innerHTML = pressures.map(pressure => {
         const isActive = state.nozzlePressure === String(pressure);
@@ -1967,7 +1981,9 @@ if (!confirmed) return;
     return;
   }
 
-  state.nozzlePressure = String(NOZZLE_PRESSURES[state.nozzleType][0]);
+  state.nozzlePressure = String(
+  getNozzlePressures()[state.nozzleType][0]
+);
 
   syncCalculatedSmoothboreTargetFlow();
   syncSmoothboreUi();
@@ -2897,8 +2913,10 @@ if (state.splitLay.appliance === "standpipe") {
       if (isSmoothbore()) {
         const tip = getSelectedSmoothboreTip();
         const displayedPressure = isReverseMode()
-          ? calculateAchievableSmoothborePressure()
-          : state.nozzlePressure;
+  ? calculateAchievableSmoothborePressure()
+  : state.nozzlePressure === "custom"
+    ? state.customNozzlePressure
+    : state.nozzlePressure;
 
         return `${tip ? tip.label : state.smoothboreTip} SB @ ${displayedPressure ?? "—"} psi`;
       }
@@ -2917,7 +2935,10 @@ return `Fog @ ${displayPressure} psi`;
     function getTargetFlowValue() {
       if (isRequiredPdpMode() && isSmoothbore()) {
         const tip = getSelectedSmoothboreTip();
-        const nozzlePressure = numberOrNull(state.nozzlePressure);
+        const nozzlePressure =
+  state.nozzlePressure === "custom"
+    ? numberOrNull(state.customNozzlePressure)
+    : numberOrNull(state.nozzlePressure);
         if (!tip || nozzlePressure === null) return "";
         return String(Math.round(smoothboreGpm(tip.diameter, nozzlePressure)));
       }
