@@ -210,6 +210,62 @@ button:active:not(:disabled) {
   );
   margin: 4px 0;
 }
+    .split-lay-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.split-lay-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.section-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255,255,255,0.35);
+}
+
+.supply-card {
+  border-left: 5px solid rgba(59, 130, 246, 0.65);
+}
+
+.supply-2-card {
+  border-left-color: rgba(14, 165, 233, 0.65);
+}
+
+.attack-card {
+  border-left: 5px solid rgba(234, 88, 12, 0.7);
+}
+
+.attack-2-card {
+  border-left-color: rgba(245, 158, 11, 0.75);
+}
+
+.split-attack-sections {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.split-attack-sections.two-lines {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (prefers-color-scheme: dark) {
+  .section-card {
+    background: rgba(2, 6, 23, 0.35);
+  }
+}
+
+@media (max-width: 720px) {
+  .split-lay-grid,
+  .split-attack-sections.two-lines {
+    grid-template-columns: 1fr;
+  }
+}
 
     .mode-buttons,
 .pressure-buttons {
@@ -738,30 +794,217 @@ Select a hydraulic calculation mode.
           <div id="splitLayFields" class="field full" hidden>
   <div class="split-lay-panel">
 
-  <strong>Split Lay Setup</strong>
+    <strong>Split Lay Setup</strong>
 
-  <p class="helper">
-    Configure supply hose, appliance, and attack line sections.
-  </p>
+    <p class="helper">
+      Build the hose path from pump to nozzle.
+    </p>
 
-  <div class="split-lay-grid">
-
-    <div class="field">
-      <label>Supply Length</label>
-      <input id="splitSupplyLength" inputmode="numeric" placeholder="Feet" />
+    <div class="field full">
+      <label>Layout</label>
+      <div class="mode-buttons" id="splitSectionButtons">
+        <button type="button" data-sections="2">2 Sections</button>
+        <button type="button" data-sections="3">3 Sections</button>
+      </div>
     </div>
 
-    <div class="field">
-      <label>Supply Hose</label>
-      <select id="splitSupplyHose">
-  <option value="2">2"</option>
-  <option value="2.25">2.25"</option>
-  <option value="2.5">2.5"</option>
-  <option value="3">3"</option>
-  <option value="4">4"</option>
-  <option value="5">5"</option>
-</select>
+    <div class="field full">
+      <label>Initial Supply</label>
+      <div class="mode-buttons" id="splitSupplyLayoutButtons">
+        <button type="button" data-supply-layout="single">Single Supply</button>
+        <button type="button" data-supply-layout="dual">Dual Supply</button>
+      </div>
+      <p class="helper">
+        Dual supply uses matching hose size and matching length.
+      </p>
     </div>
+
+    <div class="split-lay-grid section-card supply-card supply-1-card">
+
+      <div class="field full">
+        <strong>Supply Section 1</strong>
+        <p class="helper">Pump to first appliance.</p>
+      </div>
+
+      <div class="field">
+        <label>Supply 1 Length</label>
+        <input id="splitSupplyLength" inputmode="numeric" placeholder="Feet" />
+      </div>
+
+      <div class="field">
+        <label>Supply 1 Hose</label>
+        <select id="splitSupplyHose"></select>
+      </div>
+
+      <div class="field full">
+        <label>Appliance 1</label>
+        <select id="splitAppliance1">
+          <option value="gatedWye">Gated Wye</option>
+          <option value="gateValve">Gate Valve / Nozzle Shutoff</option>
+          <option value="reducer">2.5&quot; to 1.5&quot; Reducer</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div
+      class="split-lay-grid section-card supply-card supply-2-card"
+      id="splitSupply2Section"
+      hidden
+    >
+
+      <div class="field full">
+        <strong>Supply Section 2</strong>
+        <p class="helper">Second hose section between appliances.</p>
+      </div>
+
+      <div class="field">
+        <label>Supply 2 Length</label>
+        <input id="splitSupply2Length" inputmode="numeric" placeholder="Feet" />
+      </div>
+
+      <div class="field">
+        <label>Supply 2 Hose</label>
+        <select id="splitSupply2Hose"></select>
+      </div>
+
+      <div class="field full">
+        <label>Appliance 2</label>
+        <select id="splitAppliance2">
+          <option value="gatedWye">Gated Wye</option>
+          <option value="gateValve">Gate Valve / Nozzle Shutoff</option>
+          <option value="reducer">2.5&quot; to 1.5&quot; Reducer</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="field full">
+      <label>Attack Lines</label>
+      <div class="mode-buttons" id="splitAttackLineButtons">
+        <button type="button" data-attack-lines="1">1 Attack Line</button>
+        <button type="button" data-attack-lines="2">2 Attack Lines</button>
+      </div>
+    </div>
+
+    <div id="splitAttackSections" class="split-attack-sections">
+
+      <div class="split-lay-grid section-card attack-card attack-1-card">
+
+        <div class="field full">
+          <strong>Attack Line 1</strong>
+        </div>
+
+        <div class="field">
+          <label>Attack 1 Length</label>
+          <input id="splitAttack1Length" inputmode="numeric" placeholder="Feet" />
+        </div>
+
+        <div class="field">
+          <label>Attack 1 Hose</label>
+          <select id="splitAttack1Hose"></select>
+        </div>
+
+        <div class="field">
+          <label>Nozzle 1 Style</label>
+          <select id="splitAttack1NozzleType">
+            <option value="fog">Fog</option>
+            <option value="smoothbore">Smoothbore</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Nozzle 1 Pressure</label>
+          <select id="splitAttack1NozzlePressure">
+            <option value="50">50 psi</option>
+            <option value="55">55 psi</option>
+            <option value="75">75 psi</option>
+            <option value="100">100 psi</option>
+          </select>
+        </div>
+
+        <div class="field" id="splitAttack1FlowField">
+          <label>Target Flow 1</label>
+          <input id="splitAttack1Flow" inputmode="numeric" placeholder="GPM" />
+        </div>
+
+        <div class="field" id="splitAttack1SmoothboreTipField" hidden>
+          <label>Smoothbore Tip 1</label>
+          <select id="splitAttack1SmoothboreTip">
+            <option value="3/4">3/4&quot;</option>
+            <option value="7/8">7/8&quot;</option>
+            <option value="15/16">15/16&quot;</option>
+            <option value="1">1&quot;</option>
+            <option value="1-1/8">1 1/8&quot;</option>
+            <option value="1-3/16">1 3/16&quot;</option>
+            <option value="1-1/4">1 1/4&quot;</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div
+        class="split-lay-grid section-card attack-card attack-2-card"
+        id="splitAttack2Section"
+        hidden
+      >
+
+        <div class="field full">
+          <strong>Attack Line 2</strong>
+        </div>
+
+        <div class="field">
+          <label>Attack 2 Length</label>
+          <input id="splitAttack2Length" inputmode="numeric" placeholder="Feet" />
+        </div>
+
+        <div class="field">
+          <label>Attack 2 Hose</label>
+          <select id="splitAttack2Hose"></select>
+        </div>
+
+        <div class="field">
+          <label>Nozzle 2 Style</label>
+          <select id="splitAttack2NozzleType">
+            <option value="fog">Fog</option>
+            <option value="smoothbore">Smoothbore</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Nozzle 2 Pressure</label>
+          <select id="splitAttack2NozzlePressure">
+            <option value="50">50 psi</option>
+            <option value="55">55 psi</option>
+            <option value="75">75 psi</option>
+            <option value="100">100 psi</option>
+          </select>
+        </div>
+
+        <div class="field" id="splitAttack2FlowField">
+          <label>Target Flow 2</label>
+          <input id="splitAttack2Flow" inputmode="numeric" placeholder="GPM" />
+        </div>
+
+        <div class="field" id="splitAttack2SmoothboreTipField" hidden>
+          <label>Smoothbore Tip 2</label>
+          <select id="splitAttack2SmoothboreTip">
+            <option value="3/4">3/4&quot;</option>
+            <option value="7/8">7/8&quot;</option>
+            <option value="15/16">15/16&quot;</option>
+            <option value="1">1&quot;</option>
+            <option value="1-1/8">1 1/8&quot;</option>
+            <option value="1-3/16">1 3/16&quot;</option>
+            <option value="1-1/4">1 1/4&quot;</option>
+          </select>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
 
     <div class="field">
       <label>Appliance</label>
@@ -1280,17 +1523,35 @@ function isModifiedHoseCoefficient(hoseId) {
       smoothboreTip: "",
       applianceLoss: "0",
       splitLay: {
-      supplyLength: "",
-      supplyHoseSize: "3",
-      appliance: "gatedWye",
-      attackLines: "1",
-      attackLength: "",
-      attackHoseSize: "1.75",
-      attackNozzleType: "fog",
-      attackNozzlePressure: "50",
-      attackFlow: "",
-      attackSmoothboreTip: ""
-    },
+  sectionCount: "2",
+
+  supplyLayout: "single",
+  supplyLength: "",
+  supplyHoseSize: "3",
+
+  appliance1: "gatedWye",
+
+  supply2Length: "",
+  supply2HoseSize: "1.88",
+
+  appliance2: "gateValve",
+
+  attackLines: "1",
+
+  attack1Length: "",
+  attack1HoseSize: "1.75",
+  attack1NozzleType: "fog",
+  attack1NozzlePressure: "50",
+  attack1Flow: "",
+  attack1SmoothboreTip: "",
+
+  attack2Length: "",
+  attack2HoseSize: "1.75",
+  attack2NozzleType: "fog",
+  attack2NozzlePressure: "50",
+  attack2Flow: "",
+  attack2SmoothboreTip: ""
+};
       useCustomCoefficient: false,
       customCoefficient: "",
     };
@@ -1456,38 +1717,60 @@ function populateHoseOptions() {
   )).join("");
 
   const splitSupplyHose =
-    document.getElementById("splitSupplyHose");
+  document.getElementById("splitSupplyHose");
 
-  const splitAttackHose =
-    document.getElementById("splitAttackHose");
+const splitSupply2Hose =
+  document.getElementById("splitSupply2Hose");
 
-  if (splitSupplyHose) {
+const splitAttack1Hose =
+  document.getElementById("splitAttack1Hose");
 
-    const supplyOptions = HOSE_OPTIONS.filter(hose =>
-      ["2", "2.25", "2.5", "3", "4", "5"].includes(hose.id)
-    );
+const splitAttack2Hose =
+  document.getElementById("splitAttack2Hose");
 
-    splitSupplyHose.innerHTML = supplyOptions.map(hose => (
-      `<option value="${hose.id}">${hoseOptionLabel(hose)}</option>`
-    )).join("");
+const supplyOptions = HOSE_OPTIONS.filter(hose =>
+  ["2", "2.25", "2.5", "3", "4", "5"].includes(hose.id)
+);
 
-    splitSupplyHose.value =
-      state.splitLay.supplyHoseSize;
-  }
+const attackOptions = HOSE_OPTIONS.filter(hose =>
+  ["1", "1.5", "1.75", "1.88", "2", "2.25", "2.5"].includes(hose.id)
+);
 
-  if (splitAttackHose) {
+if (splitSupplyHose) {
+  splitSupplyHose.innerHTML = supplyOptions.map(hose => (
+    `<option value="${hose.id}">${hoseOptionLabel(hose)}</option>`
+  )).join("");
 
-    const attackOptions = HOSE_OPTIONS.filter(hose =>
-      ["1", "1.5", "1.75", "1.88", "2", "2.25", "2.5"].includes(hose.id)
-    );
+  splitSupplyHose.value =
+    state.splitLay.supplyHoseSize;
+}
 
-    splitAttackHose.innerHTML = attackOptions.map(hose => (
-      `<option value="${hose.id}">${hoseOptionLabel(hose)}</option>`
-    )).join("");
+if (splitSupply2Hose) {
+  splitSupply2Hose.innerHTML = attackOptions.map(hose => (
+    `<option value="${hose.id}">${hoseOptionLabel(hose)}</option>`
+  )).join("");
 
-    splitAttackHose.value =
-      state.splitLay.attackHoseSize;
-  }
+  splitSupply2Hose.value =
+    state.splitLay.supply2HoseSize;
+}
+
+if (splitAttack1Hose) {
+  splitAttack1Hose.innerHTML = attackOptions.map(hose => (
+    `<option value="${hose.id}">${hoseOptionLabel(hose)}</option>`
+  )).join("");
+
+  splitAttack1Hose.value =
+    state.splitLay.attack1HoseSize;
+}
+
+if (splitAttack2Hose) {
+  splitAttack2Hose.innerHTML = attackOptions.map(hose => (
+    `<option value="${hose.id}">${hoseOptionLabel(hose)}</option>`
+  )).join("");
+
+  splitAttack2Hose.value =
+    state.splitLay.attack2HoseSize;
+}
 }
 
     function populateSmoothboreTips() {
@@ -1788,27 +2071,108 @@ els.nozzlePressureLabel.closest(".field").style.display =
     : "";
 
     const splitLayFields = document.getElementById("splitLayFields");
-    
-      if (splitLayFields) {
-  splitLayFields.style.display = isSplitLayMode() ? "flex" : "none";
+
+if (splitLayFields) {
+  splitLayFields.style.display = isSplitLayMode() ? "grid" : "none";
 }
-      const splitTipField = document.getElementById("splitSmoothboreTipField");
-const splitFlowField = document.getElementById("splitAttackFlowField");
-const splitNozzleType = document.getElementById("splitAttackNozzleType");
 
-if (splitTipField && splitFlowField && splitNozzleType) {
-  const isSplitSmoothbore =
-    isSplitLayMode() && splitNozzleType.value === "smoothbore";
-
-  splitTipField.hidden = !isSplitSmoothbore;
-  splitTipField.style.display = isSplitSmoothbore ? "" : "none";
-
-  splitFlowField.style.display = isSplitSmoothbore ? "none" : "";
-}
+syncSplitLayUi();
 
 }
 
 function syncSmoothboreUi() {
+
+  function syncSplitLayUi() {
+  if (!isSplitLayMode()) return;
+
+  const supply2Section = document.getElementById("splitSupply2Section");
+  const attack2Section = document.getElementById("splitAttack2Section");
+  const attackSections = document.getElementById("splitAttackSections");
+
+  const sectionButtons = document.querySelectorAll("#splitSectionButtons button");
+  const supplyLayoutButtons = document.querySelectorAll("#splitSupplyLayoutButtons button");
+  const attackLineButtons = document.querySelectorAll("#splitAttackLineButtons button");
+
+  sectionButtons.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.sections === state.splitLay.sectionCount
+    );
+  });
+
+  supplyLayoutButtons.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.supplyLayout === state.splitLay.supplyLayout
+    );
+  });
+
+  attackLineButtons.forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.attackLines === state.splitLay.attackLines
+    );
+  });
+
+  if (supply2Section) {
+    const showSupply2 = state.splitLay.sectionCount === "3";
+    supply2Section.hidden = !showSupply2;
+    supply2Section.style.display = showSupply2 ? "grid" : "none";
+  }
+
+  if (attack2Section) {
+    const showAttack2 = state.splitLay.attackLines === "2";
+    attack2Section.hidden = !showAttack2;
+    attack2Section.style.display = showAttack2 ? "grid" : "none";
+  }
+
+  if (attackSections) {
+    attackSections.classList.toggle(
+      "two-lines",
+      state.splitLay.attackLines === "2"
+    );
+  }
+
+  syncSplitNozzleUi("1");
+  syncSplitNozzleUi("2");
+}
+
+function syncSplitNozzleUi(lineNumber) {
+  const nozzleType = document.getElementById(`splitAttack${lineNumber}NozzleType`);
+  const pressureSelect = document.getElementById(`splitAttack${lineNumber}NozzlePressure`);
+  const flowField = document.getElementById(`splitAttack${lineNumber}FlowField`);
+  const tipField = document.getElementById(`splitAttack${lineNumber}SmoothboreTipField`);
+
+  if (!nozzleType || !pressureSelect || !flowField || !tipField) return;
+
+  const isSmoothboreLine = nozzleType.value === "smoothbore";
+
+  pressureSelect.innerHTML = isSmoothboreLine
+    ? `
+      <option value="40">40 psi</option>
+      <option value="50">50 psi</option>
+      <option value="60">60 psi</option>
+    `
+    : `
+      <option value="50">50 psi</option>
+      <option value="55">55 psi</option>
+      <option value="75">75 psi</option>
+      <option value="100">100 psi</option>
+    `;
+
+  const pressureKey = `attack${lineNumber}NozzlePressure`;
+
+  if (![...pressureSelect.options].some(option => option.value === state.splitLay[pressureKey])) {
+    state.splitLay[pressureKey] = isSmoothboreLine ? "50" : "50";
+  }
+
+  pressureSelect.value = state.splitLay[pressureKey];
+
+  tipField.hidden = !isSmoothboreLine;
+  tipField.style.display = isSmoothboreLine ? "" : "none";
+
+  flowField.style.display = isSmoothboreLine ? "none" : "";
+}
 
   if (isRelayMode() || isSplitLayMode()) {
     els.smoothboreTipField.hidden = true;
@@ -1986,154 +2350,82 @@ if (!confirmed) return;
         renderPressureButtons();
         updateCalculator();
       });
-      document.getElementById("splitAttackNozzleType")?.addEventListener("change", e => {
+      document.querySelectorAll("#splitSectionButtons button").forEach(button => {
+  button.addEventListener("click", () => {
+    state.splitLay.sectionCount = button.dataset.sections;
 
-  const pressureSelect = document.getElementById("splitAttackNozzlePressure");
-  const tipField = document.getElementById("splitSmoothboreTipField");
-  const flowField = document.getElementById("splitAttackFlowField");
-
-  state.splitLay.attackNozzleType = e.target.value;
-
-  if (!pressureSelect || !tipField) return;
-
-  if (e.target.value === "smoothbore") {
-
-  pressureSelect.innerHTML = `
-    <option value="40">40 psi</option>
-    <option value="50">50 psi</option>
-    <option value="60">60 psi</option>
-  `;
-
-  state.splitLay.attackNozzlePressure = "50";
-  pressureSelect.value = "50";
-
-  tipField.hidden = false;
-  tipField.style.display = "";
-
-  flowField.style.display = "none";
-
-} else {
-
-  pressureSelect.innerHTML = `
-    <option value="50">50 psi</option>
-    <option value="55">55 psi</option>
-    <option value="75">75 psi</option>
-    <option value="100">100 psi</option>
-  `;
-
-  state.splitLay.attackNozzlePressure = "50";
-  pressureSelect.value = "50";
-
-  tipField.hidden = true;
-  tipField.style.display = "none";
-
-  flowField.style.display = "";
-
-}
-
-  saveState();
-  calculateAndRender();
-
+    saveState();
+    syncSplitLayUi();
+    calculateAndRender();
+  });
 });
 
-      document.getElementById("splitAppliance")?.addEventListener("change", e => {
+document.querySelectorAll("#splitSupplyLayoutButtons button").forEach(button => {
+  button.addEventListener("click", () => {
+    state.splitLay.supplyLayout = button.dataset.supplyLayout;
 
-  const attackLines = document.getElementById("splitAttackLines");
-
-  state.splitLay.appliance = e.target.value;
-
-  if (!attackLines) return;
-
-  if (e.target.value === "gateValve") {
-
-    attackLines.value = "1";
-    state.splitLay.attackLines = "1";
-
-    attackLines.querySelector('option[value="2"]').disabled = true;
-
-  } else {
-
-    attackLines.querySelector('option[value="2"]').disabled = false;
-
-  }
-
-  saveState();
-  calculateAndRender();
-
+    saveState();
+    syncSplitLayUi();
+    calculateAndRender();
+  });
 });
 
-document.getElementById("splitAttackLines")?.addEventListener("change", e => {
+document.querySelectorAll("#splitAttackLineButtons button").forEach(button => {
+  button.addEventListener("click", () => {
+    state.splitLay.attackLines = button.dataset.attackLines;
 
-  state.splitLay.attackLines = e.target.value;
-
-  saveState();
-  calculateAndRender();
-
-});
-      document.getElementById("splitSupplyLength")?.addEventListener("input", e => {
-
-  state.splitLay.supplyLength = wholeNumber(e.target.value);
-  e.target.value = state.splitLay.supplyLength;
-
-  saveState();
-  calculateAndRender();
-
+    saveState();
+    syncSplitLayUi();
+    calculateAndRender();
+  });
 });
 
-document.getElementById("splitSupplyHose")?.addEventListener("change", e => {
+[
+  ["splitSupplyLength", "supplyLength"],
+  ["splitSupplyHose", "supplyHoseSize"],
+  ["splitAppliance1", "appliance1"],
 
-  state.splitLay.supplyHoseSize = e.target.value;
+  ["splitSupply2Length", "supply2Length"],
+  ["splitSupply2Hose", "supply2HoseSize"],
+  ["splitAppliance2", "appliance2"],
 
-  saveState();
-  calculateAndRender();
+  ["splitAttack1Length", "attack1Length"],
+  ["splitAttack1Hose", "attack1HoseSize"],
+  ["splitAttack1NozzleType", "attack1NozzleType"],
+  ["splitAttack1NozzlePressure", "attack1NozzlePressure"],
+  ["splitAttack1Flow", "attack1Flow"],
+  ["splitAttack1SmoothboreTip", "attack1SmoothboreTip"],
 
-});
+  ["splitAttack2Length", "attack2Length"],
+  ["splitAttack2Hose", "attack2HoseSize"],
+  ["splitAttack2NozzleType", "attack2NozzleType"],
+  ["splitAttack2NozzlePressure", "attack2NozzlePressure"],
+  ["splitAttack2Flow", "attack2Flow"],
+  ["splitAttack2SmoothboreTip", "attack2SmoothboreTip"]
+].forEach(([elementId, stateKey]) => {
+  const element = document.getElementById(elementId);
 
-document.getElementById("splitAttackLength")?.addEventListener("input", e => {
+  if (!element) return;
 
-  state.splitLay.attackLength = wholeNumber(e.target.value);
-  e.target.value = state.splitLay.attackLength;
+  element.addEventListener("input", e => {
+    state.splitLay[stateKey] = e.target.tagName === "INPUT"
+      ? wholeNumber(e.target.value)
+      : e.target.value;
 
-  saveState();
-  calculateAndRender();
+    e.target.value = state.splitLay[stateKey];
 
-});
+    saveState();
+    syncSplitLayUi();
+    calculateAndRender();
+  });
 
-document.getElementById("splitAttackHose")?.addEventListener("change", e => {
+  element.addEventListener("change", e => {
+    state.splitLay[stateKey] = e.target.value;
 
-  state.splitLay.attackHoseSize = e.target.value;
-
-  saveState();
-  calculateAndRender();
-
-});
-
-document.getElementById("splitAttackNozzlePressure")?.addEventListener("change", e => {
-
-  state.splitLay.attackNozzlePressure = e.target.value;
-
-  saveState();
-  calculateAndRender();
-
-});
-
-document.getElementById("splitAttackFlow")?.addEventListener("input", e => {
-
-  state.splitLay.attackFlow = wholeNumber(e.target.value);
-  e.target.value = state.splitLay.attackFlow;
-
-  saveState();
-  calculateAndRender();
-
-});
-
-document.getElementById("splitAttackSmoothboreTip")?.addEventListener("change", e => {
-
-  state.splitLay.attackSmoothboreTip = e.target.value;
-
-  saveState();
-  calculateAndRender();
-
+    saveState();
+    syncSplitLayUi();
+    calculateAndRender();
+  });
 });
       els.customNozzlePressure.addEventListener("input", e => {
 
@@ -2373,35 +2665,32 @@ els.presetSelect.selectedIndex = 0;
   populateHoseOptions();
   saveState();
   syncInputsFromState();
-      document.getElementById("splitSupplyLength").value =
-  state.splitLay.supplyLength || "";
+      [
+  ["splitSupplyLength", state.splitLay.supplyLength || ""],
+  ["splitSupplyHose", state.splitLay.supplyHoseSize || "3"],
+  ["splitAppliance1", state.splitLay.appliance1 || "gatedWye"],
 
-document.getElementById("splitSupplyHose").value =
-  state.splitLay.supplyHoseSize || "3";
+  ["splitSupply2Length", state.splitLay.supply2Length || ""],
+  ["splitSupply2Hose", state.splitLay.supply2HoseSize || "1.88"],
+  ["splitAppliance2", state.splitLay.appliance2 || "gateValve"],
 
-document.getElementById("splitAppliance").value =
-  state.splitLay.appliance || "gatedWye";
+  ["splitAttack1Length", state.splitLay.attack1Length || ""],
+  ["splitAttack1Hose", state.splitLay.attack1HoseSize || "1.75"],
+  ["splitAttack1NozzleType", state.splitLay.attack1NozzleType || "fog"],
+  ["splitAttack1NozzlePressure", state.splitLay.attack1NozzlePressure || "50"],
+  ["splitAttack1Flow", state.splitLay.attack1Flow || ""],
+  ["splitAttack1SmoothboreTip", state.splitLay.attack1SmoothboreTip || ""],
 
-document.getElementById("splitAttackLines").value =
-  state.splitLay.attackLines || "1";
-
-document.getElementById("splitAttackLength").value =
-  state.splitLay.attackLength || "";
-
-document.getElementById("splitAttackHose").value =
-  state.splitLay.attackHoseSize || "1.75";
-
-document.getElementById("splitAttackNozzleType").value =
-  state.splitLay.attackNozzleType || "fog";
-
-document.getElementById("splitAttackNozzlePressure").value =
-  state.splitLay.attackNozzlePressure || "50";
-
-document.getElementById("splitAttackFlow").value =
-  state.splitLay.attackFlow || "";
-
-document.getElementById("splitAttackSmoothboreTip").value =
-  state.splitLay.attackSmoothboreTip || "";
+  ["splitAttack2Length", state.splitLay.attack2Length || ""],
+  ["splitAttack2Hose", state.splitLay.attack2HoseSize || "1.75"],
+  ["splitAttack2NozzleType", state.splitLay.attack2NozzleType || "fog"],
+  ["splitAttack2NozzlePressure", state.splitLay.attack2NozzlePressure || "50"],
+  ["splitAttack2Flow", state.splitLay.attack2Flow || ""],
+  ["splitAttack2SmoothboreTip", state.splitLay.attack2SmoothboreTip || ""]
+].forEach(([id, value]) => {
+  const element = document.getElementById(id);
+  if (element) element.value = value;
+});
   syncSmoothboreUi();
   syncModeUi();
   renderPressureButtons();
@@ -2673,39 +2962,216 @@ function calculateRelayPdp({
 
 function calculateSplitLay(warnings) {
 
-  const supplyLength =
+  const sectionCount = state.splitLay.sectionCount;
+  const supplyLayout = state.splitLay.supplyLayout;
+  const attackLines = parseInt(state.splitLay.attackLines, 10) || 1;
+
+  const supply1Length =
     numberOrNull(state.splitLay.supplyLength);
 
-  const attackLength =
-    numberOrNull(state.splitLay.attackLength);
-
-  const attackLines =
-  parseInt(state.splitLay.attackLines, 10) || 1;
-
-  const applianceLoss =
-    numberOrNull(state.applianceLoss) || 0;
-
-  const supplyHose =
-    HOSE_OPTIONS.find(
-      hose => hose.id === state.splitLay.supplyHoseSize
+  const supply1Hose =
+    HOSE_OPTIONS.find(hose =>
+      hose.id === state.splitLay.supplyHoseSize
     );
 
-  const attackHose =
-    HOSE_OPTIONS.find(
-      hose => hose.id === state.splitLay.attackHoseSize
-    );
-
-  if (
-    !supplyHose ||
-    !attackHose ||
-    supplyLength === null ||
-    attackLength === null
-  ) {
+  if (!supply1Hose || supply1Length === null) {
     renderWarnings(warnings);
     return;
   }
 
-  let attackFlow = 0;
+  const attack1 = calculateSplitAttackLine("1", warnings);
+  if (!attack1) return;
+
+  const attack2 =
+    attackLines === 2
+      ? calculateSplitAttackLine("2", warnings)
+      : null;
+
+  if (attackLines === 2 && !attack2) return;
+
+  const totalAttackFlow =
+    attack1.flow + (attack2 ? attack2.flow : 0);
+
+  const appliance1Loss =
+    getSplitApplianceLoss(
+      state.splitLay.appliance1,
+      totalAttackFlow
+    );
+
+  let appliance2Loss = 0;
+  let supply2TotalFl = 0;
+
+  if (sectionCount === "3") {
+
+    const supply2Length =
+      numberOrNull(state.splitLay.supply2Length);
+
+    const supply2Hose =
+      HOSE_OPTIONS.find(hose =>
+        hose.id === state.splitLay.supply2HoseSize
+      );
+
+    if (!supply2Hose || supply2Length === null) {
+      warnings.push("Enter Supply Section 2 hose and length.");
+      renderWarnings(warnings);
+      return;
+    }
+
+    const supply2Q =
+      totalAttackFlow / 100;
+
+    const supply2FlPer100 =
+      getActiveHoseCoefficient(supply2Hose.id) *
+      supply2Q *
+      supply2Q;
+
+    supply2TotalFl =
+      supply2FlPer100 *
+      (supply2Length / 100);
+
+    appliance2Loss =
+      getSplitApplianceLoss(
+        state.splitLay.appliance2,
+        totalAttackFlow
+      );
+
+  }
+
+  const supply1Q =
+    totalAttackFlow / 100;
+
+  let supply1Coefficient =
+    getActiveHoseCoefficient(supply1Hose.id);
+
+  if (supplyLayout === "dual") {
+    supply1Coefficient = supply1Coefficient / 4;
+  }
+
+  const supply1FlPer100 =
+    supply1Coefficient *
+    supply1Q *
+    supply1Q;
+
+  const supply1TotalFl =
+    supply1FlPer100 *
+    (supply1Length / 100);
+
+  const highestAttackSidePdp =
+    Math.max(
+      attack1.requiredPdp,
+      attack2 ? attack2.requiredPdp : 0
+    );
+
+  const totalPdp =
+    highestAttackSidePdp +
+    supply2TotalFl +
+    appliance2Loss +
+    supply1TotalFl +
+    appliance1Loss;
+
+  if (appliance1Loss > 0) {
+    warnings.push("Estimated Appliance 1 loss applied: 10 psi at flows ≥350 GPM.");
+  }
+
+  if (appliance2Loss > 0) {
+    warnings.push("Estimated Appliance 2 loss applied: 10 psi at flows ≥350 GPM.");
+  }
+
+  if (supplyLayout === "dual") {
+    warnings.push("Dual supply assumes matching hose size and matching hose length.");
+  }
+
+  if (attackLines === 2 && attack2) {
+    const attackDifference =
+      Math.abs(attack1.requiredPdp - attack2.requiredPdp);
+
+    if (attackDifference > 5) {
+      warnings.push(
+        "Unequal attack line configurations detected. The lower-pressure side may be overpumped. Verify flow and nozzle pressure manually."
+      );
+    }
+  }
+
+  setResult(
+    Math.round(totalPdp),
+    `${Math.round(totalAttackFlow)} GPM`,
+    `${Math.round(
+      supply1TotalFl + supply2TotalFl + attack1.totalFl + (attack2 ? attack2.totalFl : 0)
+    )} psi total`,
+    `${Math.round(supply1TotalFl)} supply 1 / ${Math.round(supply2TotalFl)} supply 2`,
+    attackLines === 2
+      ? `${Math.round(attack1.flow)} / ${Math.round(attack2.flow)} GPM`
+      : `${Math.round(attack1.flow)} GPM`,
+    supplyLayout === "dual"
+      ? `Dual ${supply1Hose.label} Supply`
+      : `${supply1Length}' ${supply1Hose.label} Supply`,
+    attackLines === 2
+      ? `${attack1.reaction} / ${attack2.reaction}`
+      : attack1.reaction
+  );
+
+  renderWarnings(warnings);
+
+}
+    function getSplitAttackCount() {
+  return state.splitLay.attackCount || "1";
+}
+
+function getSplitSupplyLines() {
+  const count = Number(state.splitLay.supplyLineCount || 1);
+  return Math.max(1, Math.min(2, count));
+}
+
+function getSplitSupplyFlow(totalFlow) {
+  const supplyLines = getSplitSupplyLines();
+
+  if (supplyLines === 2) {
+    return totalFlow / 2;
+  }
+
+  return totalFlow;
+}
+
+function getApplianceLoss(appliance, gpm) {
+  if (!appliance || appliance === "none") return 0;
+
+  // Current app standard:
+  // Small appliances are ignored until 350 GPM or greater.
+  return gpm >= 350 ? 10 : 0;
+}
+
+function calcHoseFL(gpm, coeff, feet) {
+  const hundreds = Number(feet || 0) / 100;
+  const c = Number(coeff || 0);
+
+  if (!gpm || !c || !hundreds) return 0;
+
+  return c * Math.pow(gpm / 100, 2) * hundreds;
+}
+
+function calcSmoothboreFlow(tipSize, nozzlePressure) {
+  const diameter = Number(tipSize || 0);
+  const np = Number(nozzlePressure || 0);
+
+  if (!diameter || !np) return 0;
+
+  return 29.7 * Math.pow(diameter, 2) * Math.sqrt(np);
+}
+
+function roundToNearest5(value) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.round(value / 5) * 5;
+}
+
+function formatPsi(value) {
+  if (!Number.isFinite(value)) return "0 psi";
+  return `${Math.round(value)} psi`;
+}
+
+function formatGpm(value) {
+  if (!Number.isFinite(value)) return "0 GPM";
+  return `${roundToNearest5(value)} GPM`;
+}
 
   // ========================================
   // FOG NOZZLE FLOW
@@ -3020,18 +3486,41 @@ function resetSplitLayInputs() {
     ...DEFAULT_STATE.splitLay
   };
 
-  const fields = {
-    splitSupplyLength: "",
-    splitSupplyHose: DEFAULT_STATE.splitLay.supplyHoseSize,
-    splitAppliance: DEFAULT_STATE.splitLay.appliance,
-    splitAttackLines: DEFAULT_STATE.splitLay.attackLines,
-    splitAttackLength: "",
-    splitAttackHose: DEFAULT_STATE.splitLay.attackHoseSize,
-    splitAttackNozzleType: DEFAULT_STATE.splitLay.attackNozzleType,
-    splitAttackNozzlePressure: DEFAULT_STATE.splitLay.attackNozzlePressure,
-    splitAttackFlow: "",
-    splitAttackSmoothboreTip: DEFAULT_STATE.splitLay.attackSmoothboreTip
-  };
+  [
+    ["splitSupplyLength", ""],
+    ["splitSupplyHose", DEFAULT_STATE.splitLay.supplyHoseSize],
+    ["splitAppliance1", DEFAULT_STATE.splitLay.appliance1],
+
+    ["splitSupply2Length", ""],
+    ["splitSupply2Hose", DEFAULT_STATE.splitLay.supply2HoseSize],
+    ["splitAppliance2", DEFAULT_STATE.splitLay.appliance2],
+
+    ["splitAttack1Length", ""],
+    ["splitAttack1Hose", DEFAULT_STATE.splitLay.attack1HoseSize],
+    ["splitAttack1NozzleType", DEFAULT_STATE.splitLay.attack1NozzleType],
+    ["splitAttack1NozzlePressure", DEFAULT_STATE.splitLay.attack1NozzlePressure],
+    ["splitAttack1Flow", ""],
+    ["splitAttack1SmoothboreTip", DEFAULT_STATE.splitLay.attack1SmoothboreTip],
+
+    ["splitAttack2Length", ""],
+    ["splitAttack2Hose", DEFAULT_STATE.splitLay.attack2HoseSize],
+    ["splitAttack2NozzleType", DEFAULT_STATE.splitLay.attack2NozzleType],
+    ["splitAttack2NozzlePressure", DEFAULT_STATE.splitLay.attack2NozzlePressure],
+    ["splitAttack2Flow", ""],
+    ["splitAttack2SmoothboreTip", DEFAULT_STATE.splitLay.attack2SmoothboreTip]
+  ].forEach(([id, value]) => {
+
+    const el = document.getElementById(id);
+
+    if (el) {
+      el.value = value;
+    }
+
+  });
+
+  syncSplitLayUi();
+
+}
 
   Object.entries(fields).forEach(([id, value]) => {
 
