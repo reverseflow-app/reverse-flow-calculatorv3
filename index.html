@@ -2851,6 +2851,9 @@ function syncSplitLayUi() {
     supply2Section.hidden = !showSupply2;
     supply2Section.style.display = showSupply2 ? "grid" : "none";
   }
+  if (state.splitLay.sectionCount !== "3") {
+  clearSplitSupply2State();
+}
 
   if (attack2Section) {
     const showAttack2 = state.splitLay.attackLines === "2";
