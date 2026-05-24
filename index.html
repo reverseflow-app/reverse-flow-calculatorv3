@@ -2427,7 +2427,9 @@ function enforceSplitLayRestrictions() {
   );
 
   const twoAttackAllowed =
-  connectingAppliance === "gatedWye";
+  state.splitLay.sectionCount === "3"
+    ? state.splitLay.appliance2 === "gatedWye"
+    : state.splitLay.appliance1 === "gatedWye";
 
   if (!twoAttackAllowed) {
     state.splitLay.attackLines = "1";
