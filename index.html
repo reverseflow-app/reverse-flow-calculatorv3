@@ -2399,80 +2399,25 @@ if (splitAttack2Hose) {
   </div>
 
 </div>
-
-        <div style="
-  display:grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-  gap:14px;
-  margin:14px 0 10px;
-">
-
-  <div>
-    <div class="helper">HOSE</div>
-    <div style="
-      font-size:18px;
-      font-weight:800;
-    ">
-      ${preset.hoseSize || "—"}
-    </div>
-  </div>
-
-  <div>
-    <div class="helper">LENGTH</div>
-    <div style="
-      font-size:18px;
-      font-weight:800;
-    ">
-      ${preset.hoseLength || "—"}'
-    </div>
-  </div>
-
-  <div>
-    <div class="helper">NOZZLE</div>
-    <div style="
-      font-size:18px;
-      font-weight:800;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    ">
-      ${nozzleDisplay}
-    </div>
-  </div>
-
-</div>
-
-        <div style="
-  margin:14px 0;
-  padding:14px;
-  border-radius:18px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--border);
+<div style="
+  margin-top:14px;
 ">
 
   <div style="
-    font-size:15px;
-    opacity:0.7;
-    margin-bottom:4px;
-  ">
-    PUMP DISCHARGE PRESSURE
-  </div>
-
-  <div style="
-    font-size:36px;
+    font-size:44px;
     font-weight:900;
     line-height:1;
-    margin-bottom:10px;
+    margin-bottom:8px;
   ">
     ${preset.calculatedPdp || "—"} PSI
   </div>
 
-  <div style="
-    font-size:18px;
-    font-weight:700;
-    opacity:0.9;
+  <div class="helper" style="
+    font-size:15px;
+    line-height:1.4;
+    margin-bottom:14px;
   ">
-    ${preset.calculatedFlow || "—"}
+    ${preset.calculatedFlow || "—"} • ${preset.hoseLength || "—"}' ${preset.hoseSize || "—"} • ${nozzleDisplay}
   </div>
 
 </div>
