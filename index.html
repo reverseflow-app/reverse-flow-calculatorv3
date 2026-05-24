@@ -2974,6 +2974,19 @@ function calculateSplitLay(warnings) {
       attack1.requiredPdp,
       attack2 ? attack2.requiredPdp : 0
     );
+  const actualAttack1 =
+  calculateActualSplitLine(
+    attack1,
+    highestAttackSidePdp
+  );
+
+const actualAttack2 =
+  attack2
+    ? calculateActualSplitLine(
+        attack2,
+        highestAttackSidePdp
+      )
+    : null;
 
   const totalPdp =
     highestAttackSidePdp +
@@ -3015,8 +3028,8 @@ function calculateSplitLay(warnings) {
   ? `S1 ${Math.round(supply1TotalFl)} / S2 ${Math.round(supply2TotalFl)} / Attack ${Math.round(attack1.totalFl + (attack2 ? attack2.totalFl : 0))}`
   : `Supply ${Math.round(supply1TotalFl)} / Attack ${Math.round(attack1.totalFl + (attack2 ? attack2.totalFl : 0))}`,
     attackLines === 2
-      ? `${Math.round(attack1.flow)} / ${Math.round(attack2.flow)} GPM`
-      : `${Math.round(attack1.flow)} GPM`,
+  ? `L1 ${Math.round(actualAttack1.actualFlow)} @ ${Math.round(actualAttack1.actualNozzlePressure)} / L2 ${Math.round(actualAttack2.actualFlow)} @ ${Math.round(actualAttack2.actualNozzlePressure)}`
+  : `${Math.round(actualAttack1.actualFlow)} GPM @ ${Math.round(actualAttack1.actualNozzlePressure)} psi`,
     supplyLayout === "dual"
       ? `Dual ${supply1Hose.label} Supply`
       : `${supply1Length}' ${supply1Hose.label} Supply`,
@@ -3224,10 +3237,50 @@ function calculateSplitAttackLine(lineNumber, warnings) {
   }
 
   return {
-    flow,
-    totalFl,
-    requiredPdp,
-    reaction
+  lineNumber,
+  hose,
+  length,
+  nozzleType,
+  nozzlePressure,
+  flow,
+  flPer100,
+  totalFl,
+  requiredPdp,
+  reaction
+};
+
+}
+    function calculateActualSplitLine(line, branchPressure) {
+
+  const actualNozzlePressure =
+    Math.max(0, branchPressure - line.totalFl);
+
+  let actualFlow = line.flow;
+
+  if (line.nozzleType === "smoothbore") {
+
+    const tipId =
+      state.splitLay[`attack${line.lineNumber}SmoothboreTip`];
+
+    const tip =
+      SMOOTHBORE_TIPS.find(t => t.id === tipId);
+
+    if (tip) {
+
+      actualFlow =
+        smoothboreGpm(
+          tip.diameter,
+          actualNozzlePressure
+        );
+
+    }
+
+  }
+
+  return {
+    ...line,
+    actualNozzlePressure,
+    actualFlow
   };
 
 }
