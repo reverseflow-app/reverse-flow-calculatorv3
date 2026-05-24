@@ -2413,7 +2413,10 @@ function syncSmoothboreUi() {
 }
 
 function enforceSplitLayRestrictions() {
-  const appliance1 = state.splitLay.appliance1;
+  const connectingAppliance =
+  state.splitLay.sectionCount === "3"
+    ? state.splitLay.appliance2
+    : state.splitLay.appliance1;
 
   const attack2Button = document.querySelector(
     '#splitAttackLineButtons button[data-attack-lines="2"]'
@@ -2424,7 +2427,7 @@ function enforceSplitLayRestrictions() {
   );
 
   const twoAttackAllowed =
-    appliance1 === "gatedWye";
+  connectingAppliance === "gatedWye";
 
   if (!twoAttackAllowed) {
     state.splitLay.attackLines = "1";
