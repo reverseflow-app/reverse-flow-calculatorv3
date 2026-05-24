@@ -1551,7 +1551,7 @@ function isModifiedHoseCoefficient(hoseId) {
   attack2NozzlePressure: "50",
   attack2Flow: "",
   attack2SmoothboreTip: ""
-};
+},
       useCustomCoefficient: false,
       customCoefficient: "",
     };
@@ -2151,7 +2151,6 @@ function syncSplitLayUi() {
   syncSplitNozzleUi("1");
   syncSplitNozzleUi("2");
 }
-    }
 
 function syncSplitNozzleUi(lineNumber) {
   const nozzleType = document.getElementById(`splitAttack${lineNumber}NozzleType`);
@@ -3371,33 +3370,6 @@ function resetSplitLayInputs() {
   });
 
   syncSplitLayUi();
-
-}
-
-  Object.entries(fields).forEach(([id, value]) => {
-
-    const el = document.getElementById(id);
-
-    if (el) {
-      el.value = value;
-    }
-
-  });
-
-  const splitTipField =
-    document.getElementById("splitSmoothboreTipField");
-
-  const splitFlowField =
-    document.getElementById("splitAttackFlowField");
-
-  if (splitTipField) {
-    splitTipField.hidden = true;
-    splitTipField.style.display = "none";
-  }
-
-  if (splitFlowField) {
-    splitFlowField.style.display = "";
-  }
 
 }
     
