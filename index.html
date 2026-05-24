@@ -2370,28 +2370,40 @@ if (splitAttack2Hose) {
 
         <div style="
   display:grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
-  gap:10px;
-  margin:12px 0;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap:14px;
+  margin:14px 0 10px;
 ">
 
   <div>
     <div class="helper">HOSE</div>
-    <div style="font-weight:700;">
+    <div style="
+      font-size:18px;
+      font-weight:800;
+    ">
       ${preset.hoseSize || "—"}
     </div>
   </div>
 
   <div>
     <div class="helper">LENGTH</div>
-    <div style="font-weight:700;">
+    <div style="
+      font-size:18px;
+      font-weight:800;
+    ">
       ${preset.hoseLength || "—"}'
     </div>
   </div>
 
-  <div style="grid-column:1 / -1;">
+  <div>
     <div class="helper">NOZZLE</div>
-    <div style="font-weight:700;">
+    <div style="
+      font-size:18px;
+      font-weight:800;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    ">
       ${nozzleDisplay}
     </div>
   </div>
