@@ -3085,6 +3085,150 @@ function formatGpm(value) {
   if (!Number.isFinite(value)) return "0 GPM";
   return `${roundToNearest5(value)} GPM`;
 }
+    function getSplitApplianceLoss(appliance, gpm) {
+
+  if (!appliance || appliance === "none") {
+    return 0;
+  }
+
+  return gpm >= 350 ? 10 : 0;
+
+}
+
+function calculateSplitAttackLine(lineNumber, warnings) {
+
+  const hoseSize =
+    state.splitLay[`attack${lineNumber}HoseSize`];
+
+  const hose =
+    HOSE_OPTIONS.find(h => h.id === hoseSize);
+
+  const length =
+    numberOrNull(
+      state.splitLay[`attack${lineNumber}Length`]
+    );
+
+  const nozzleType =
+    state.splitLay[`attack${lineNumber}NozzleType`];
+
+  const nozzlePressure =
+    numberOrNull(
+      state.splitLay[`attack${lineNumber}NozzlePressure`]
+    );
+
+  if (!hose || length === null || nozzlePressure === null) {
+
+    warnings.push(
+      `Complete Attack Line ${lineNumber} configuration.`
+    );
+
+    renderWarnings(warnings);
+
+    return null;
+  }
+
+  let flow = 0;
+
+  if (nozzleType === "smoothbore") {
+
+    const tipId =
+      state.splitLay[`attack${lineNumber}SmoothboreTip`];
+
+    const tip =
+      SMOOTHBORE_TIPS.find(t => t.id === tipId);
+
+    if (!tip) {
+
+      warnings.push(
+        `Select a smoothbore tip for Attack Line ${lineNumber}.`
+      );
+
+      renderWarnings(warnings);
+
+      return null;
+    }
+
+    flow =
+      smoothboreGpm(
+        tip.diameter,
+        nozzlePressure
+      );
+
+  } else {
+
+    flow =
+      numberOrNull(
+        state.splitLay[`attack${lineNumber}Flow`]
+      );
+
+    if (flow === null || flow <= 0) {
+
+      warnings.push(
+        `Enter target flow for Attack Line ${lineNumber}.`
+      );
+
+      renderWarnings(warnings);
+
+      return null;
+    }
+
+  }
+
+  const q = flow / 100;
+
+  const coefficient =
+    getActiveHoseCoefficient(hose.id);
+
+  const flPer100 =
+    coefficient * q * q;
+
+  const totalFl =
+    flPer100 * (length / 100);
+
+  const requiredPdp =
+    totalFl + nozzlePressure;
+
+  let reaction = "—";
+
+  if (nozzleType === "smoothbore") {
+
+    const tipId =
+      state.splitLay[`attack${lineNumber}SmoothboreTip`];
+
+    const tip =
+      SMOOTHBORE_TIPS.find(t => t.id === tipId);
+
+    if (tip) {
+
+      reaction =
+        `${Math.round(
+          1.57 *
+          tip.diameter *
+          tip.diameter *
+          nozzlePressure
+        )} lb`;
+
+    }
+
+  } else {
+
+    reaction =
+      `${Math.round(
+        0.0505 *
+        flow *
+        Math.sqrt(nozzlePressure)
+      )} lb`;
+
+  }
+
+  return {
+    flow,
+    totalFl,
+    requiredPdp,
+    reaction
+  };
+
+}
 
 
     // ========================================
