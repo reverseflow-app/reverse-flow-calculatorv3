@@ -3125,6 +3125,10 @@ document.querySelectorAll("#splitAttackLineButtons button").forEach(button => {
   button.addEventListener("click", () => {
     state.splitLay.attackLines = button.dataset.attackLines;
 
+    if (state.splitLay.attackLines === "1") {
+      clearSplitAttack2State();
+    }
+
     saveState();
     syncSplitLayUi();
     calculateAndRender();
@@ -4571,7 +4575,30 @@ return `Fog @ ${displayPressure} psi`;
     // ========================================
 // SPLIT LAY RESET
 // ========================================
+function clearSplitAttack2State() {
+  state.splitLay.attack2Length = "";
+  state.splitLay.attack2Flow = "";
+  state.splitLay.attack2SmoothboreTip = "";
+  state.splitLay.attack2NozzleType =
+    DEFAULT_STATE.splitLay.attack2NozzleType;
+  state.splitLay.attack2NozzlePressure =
+    DEFAULT_STATE.splitLay.attack2NozzlePressure;
+  state.splitLay.attack2HoseSize =
+    DEFAULT_STATE.splitLay.attack2HoseSize;
 
+  [
+    ["splitAttack2Length", ""],
+    ["splitAttack2Flow", ""],
+    ["splitAttack2SmoothboreTip", ""],
+    ["splitAttack2NozzleType", DEFAULT_STATE.splitLay.attack2NozzleType],
+    ["splitAttack2NozzlePressure", DEFAULT_STATE.splitLay.attack2NozzlePressure],
+    ["splitAttack2Hose", DEFAULT_STATE.splitLay.attack2HoseSize]
+  ].forEach(([id, value]) => {
+    const element = document.getElementById(id);
+    if (element) element.value = value;
+  });
+}
+    
 function resetSplitLayInputs() {
 
   state.splitLay = {
