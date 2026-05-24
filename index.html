@@ -2915,6 +2915,7 @@ els.presetSelect.selectedIndex = 0;
       const warnings = [];
 
       setResult("—", "—", "—", "—", getNozzleDisplay(), getSetupDisplay());
+      resetSplitResults();
 
       
       
@@ -3293,6 +3294,16 @@ const actualAttack2 =
     }
   }
 
+  setSplitResults({
+  totalPdp,
+  totalAttackFlow,
+  supply1TotalFl,
+  supply2TotalFl,
+  appliance1Loss,
+  appliance2Loss,
+  actualAttack1,
+  actualAttack2
+});
   setResult(
     Math.round(totalPdp),
     `${Math.round(totalAttackFlow)} GPM`,
@@ -3591,6 +3602,80 @@ function calculateSplitAttackLine(lineNumber, warnings) {
     // ========================================
     // RESULT RENDERING
     // ========================================
+    function resetSplitResults() {
+  if (!els.splitResultsCard) return;
+
+  els.splitPrimaryPdp.textContent = "— PSI";
+
+  els.splitSupplyFlow.textContent = "—";
+  els.splitSupplyLoss.textContent = "—";
+  els.splitApplianceLoss.textContent = "—";
+
+  els.splitSupply2Flow.textContent = "—";
+  els.splitSupply2Loss.textContent = "—";
+  els.splitAppliance2Loss.textContent = "—";
+
+  els.splitAttack1FlowResult.textContent = "—";
+  els.splitAttack1NpResult.textContent = "—";
+  els.splitAttack1FlResult.textContent = "—";
+
+  els.splitAttack2FlowResult.textContent = "—";
+  els.splitAttack2NpResult.textContent = "—";
+  els.splitAttack2FlResult.textContent = "—";
+}
+    function setSplitResults({
+  totalPdp,
+  totalAttackFlow,
+  supply1TotalFl,
+  supply2TotalFl = 0,
+  appliance1Loss = 0,
+  appliance2Loss = 0,
+  actualAttack1,
+  actualAttack2 = null
+}) {
+  if (!els.splitResultsCard) return;
+
+  els.splitPrimaryPdp.textContent =
+    `${Math.round(totalPdp)} PSI`;
+
+  els.splitSupplyFlow.textContent =
+    `${Math.round(totalAttackFlow)} GPM`;
+
+  els.splitSupplyLoss.textContent =
+    `${Math.round(supply1TotalFl)} psi`;
+
+  els.splitApplianceLoss.textContent =
+    `${Math.round(appliance1Loss)} psi`;
+
+  els.splitSupply2Flow.textContent =
+    `${Math.round(totalAttackFlow)} GPM`;
+
+  els.splitSupply2Loss.textContent =
+    `${Math.round(supply2TotalFl)} psi`;
+
+  els.splitAppliance2Loss.textContent =
+    `${Math.round(appliance2Loss)} psi`;
+
+  els.splitAttack1FlowResult.textContent =
+    `${Math.round(actualAttack1.actualFlow)} GPM`;
+
+  els.splitAttack1NpResult.textContent =
+    `${Math.round(actualAttack1.actualNozzlePressure)} psi`;
+
+  els.splitAttack1FlResult.textContent =
+    `${Math.round(actualAttack1.totalFl)} psi`;
+
+  if (actualAttack2) {
+    els.splitAttack2FlowResult.textContent =
+      `${Math.round(actualAttack2.actualFlow)} GPM`;
+
+    els.splitAttack2NpResult.textContent =
+      `${Math.round(actualAttack2.actualNozzlePressure)} psi`;
+
+    els.splitAttack2FlResult.textContent =
+      `${Math.round(actualAttack2.totalFl)} psi`;
+  }
+}
     function setResult(rounded, calculated, total, per100, nozzle, setup, reaction = "-") {
       els.roundedGpm.textContent = rounded;
       els.calculatedGpm.textContent = calculated;
