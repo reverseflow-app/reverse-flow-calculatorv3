@@ -643,6 +643,9 @@ button:active:not(:disabled) {
 }
 
 .split-result-title {
+  display: flex;
+  justify-content: space-between;
+  
   border-left: 6px solid transparent;
   padding: 14px 18px;
   font-size: 13px;
@@ -652,6 +655,20 @@ button:active:not(:disabled) {
   border-bottom: 1px solid var(--border);
   background: rgba(255,255,255,0.03);
   color: var(--ink);
+}
+    .pressure-path-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.16);
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
   .supply-1-title {
   border-left-color: #3b82f6;
@@ -1460,8 +1477,9 @@ Select a hydraulic calculation mode.
     <div class="split-result-section">
 
       <div class="split-result-title attack-1-title">
-        Attack Line 1 • Actual Delivered Conditions
-      </div>
+      <span>Attack Line 1 • Actual Delivered Conditions</span>
+      <span id="splitAttack1PressureTag" class="pressure-path-tag">—</span>
+    </div>
 
       <div class="split-result-details">
 
@@ -1491,8 +1509,9 @@ Select a hydraulic calculation mode.
     >
 
       <div class="split-result-title attack-2-title">
-        Attack Line 2 • Actual Delivered Conditions
-      </div>
+      <span>Attack Line 2 • Actual Delivered Conditions</span>
+      <span id="splitAttack2PressureTag" class="pressure-path-tag">—</span>
+    </div>
 
       <div class="split-result-details">
 
@@ -1952,6 +1971,11 @@ function isModifiedHoseCoefficient(hoseId) {
       warningsCard: document.getElementById("warningsCard"),
       splitDualSupplyToggle: document.getElementById("splitDualSupplyToggle"),
       splitResultsCard: document.getElementById("splitResultsCard"),
+      splitAttack1PressureTag:
+        document.getElementById("splitAttack1PressureTag"),
+
+      splitAttack2PressureTag:
+        document.getElementById("splitAttack2PressureTag"),
       splitPrimaryPdp: document.getElementById("splitPrimaryPdp"),
       splitSupplyLayoutResult:
         document.getElementById("splitSupplyLayoutResult"),
@@ -3895,6 +3919,8 @@ function calculateSplitSmoothboreReaction(line, nozzlePressure) {
   els.splitAttack2FlowResult.textContent = "—";
   els.splitAttack2NpResult.textContent = "—";
   els.splitAttack2FlResult.textContent = "—";
+  els.splitAttack1PressureTag.textContent = "—";
+  els.splitAttack2PressureTag.textContent = "—";
 }
     function setSplitResults({
   totalPdp,
@@ -3952,6 +3978,47 @@ function calculateSplitSmoothboreReaction(line, nozzlePressure) {
 
   els.splitAttack1FlResult.textContent =
   `${Math.round(actualAttack1.actualTotalFl)} psi`;
+      const pressureDifference =
+  actualAttack2
+    ? Math.abs(
+        actualAttack1.actualNozzlePressure -
+        actualAttack2.actualNozzlePressure
+      )
+    : 0;
+
+if (!actualAttack2) {
+
+  els.splitAttack1PressureTag.textContent =
+    "SINGLE LINE";
+
+} else if (pressureDifference <= 2) {
+
+  els.splitAttack1PressureTag.textContent =
+    "EQUAL PRESSURE";
+
+  els.splitAttack2PressureTag.textContent =
+    "EQUAL PRESSURE";
+
+} else if (
+  actualAttack1.actualNozzlePressure >
+  actualAttack2.actualNozzlePressure
+) {
+
+  els.splitAttack1PressureTag.textContent =
+    "HIGH PRESSURE";
+
+  els.splitAttack2PressureTag.textContent =
+    "LOW PRESSURE";
+
+} else {
+
+  els.splitAttack1PressureTag.textContent =
+    "LOW PRESSURE";
+
+  els.splitAttack2PressureTag.textContent =
+    "HIGH PRESSURE";
+
+}
 
   if (actualAttack2) {
     els.splitAttack2FlowResult.textContent =
