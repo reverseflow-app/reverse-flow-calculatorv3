@@ -3227,6 +3227,16 @@ els.presetSelect.selectedIndex = 0;
     customCoefficient:
       state.customCoefficient || "",
 
+    calculatedPdp:
+  isRequiredPdpMode() || isRelayMode()
+    ? els.roundedGpm.textContent
+    : "",
+
+calculatedFlow:
+  isReverseMode()
+    ? `${els.roundedGpm.textContent} GPM`
+    : els.calculatedGpm.textContent,
+
     splitLay: {
       ...state.splitLay
     }
