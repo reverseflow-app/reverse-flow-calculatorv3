@@ -229,19 +229,19 @@ button:active:not(:disabled) {
 }
 
 .supply-card {
-  border-left: 5px solid rgba(59, 130, 246, 0.65);
+  border-left: 6px solid #3b82f6;
 }
 
 .supply-2-card {
-  border-left-color: rgba(14, 165, 233, 0.65);
+  border-left-color: #06b6d4;
 }
 
 .attack-card {
-  border-left: 5px solid rgba(234, 88, 12, 0.7);
+  border-left: 6px solid #f97316;
 }
 
 .attack-2-card {
-  border-left-color: rgba(245, 158, 11, 0.75);
+  border-left-color: #ef4444;
 }
 
 .split-attack-sections {
@@ -557,8 +557,8 @@ button:active:not(:disabled) {
 .split-results-header {
   background: linear-gradient(
     135deg,
-    #581c87,
-    #7e22ce
+    #0f172a,
+    #1e293b
   );
   color: white;
   padding: 24px;
@@ -572,6 +572,7 @@ button:active:not(:disabled) {
   font-size: 12px;
   font-weight: 800;
   opacity: 0.82;
+  color: #94a3b8;
 }
 
 .split-results-header strong {
@@ -579,6 +580,7 @@ button:active:not(:disabled) {
   font-size: clamp(48px, 10vw, 72px);
   line-height: 0.9;
   letter-spacing: -0.06em;
+  color: #f8fafc;
 }
 
 .split-results-grid {
@@ -592,9 +594,11 @@ button:active:not(:disabled) {
   border-radius: 18px;
   overflow: hidden;
   background: rgba(255,255,255,0.02);
+  position: relative;
 }
 
 .split-result-title {
+  border-left: 6px solid transparent;
   padding: 14px 18px;
   font-size: 13px;
   font-weight: 900;
@@ -602,6 +606,22 @@ button:active:not(:disabled) {
   text-transform: uppercase;
   border-bottom: 1px solid var(--border);
   background: rgba(255,255,255,0.03);
+  color: #e2e8f0;
+}
+  .supply-1-title {
+  border-left-color: #3b82f6;
+}
+
+.supply-2-title {
+  border-left-color: #06b6d4;
+}
+
+.attack-1-title {
+  border-left-color: #f97316;
+}
+
+.attack-2-title {
+  border-left-color: #ef4444;
 }
 
 .split-result-details {
@@ -624,7 +644,7 @@ button:active:not(:disabled) {
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: #94a3b8;
 }
 
 .split-result-item strong {
@@ -633,9 +653,15 @@ button:active:not(:disabled) {
   line-height: 1.15;
   letter-spacing: -0.03em;
   white-space: pre-line;
+  overflow-wrap: anywhere;
 }
     .split-result-item strong.overpressure {
-  color: #f97316;
+  color: #fb923c;
+  text-shadow: 0 0 12px rgba(251, 146, 60, 0.35);
+}
+    .split-result-item strong.flow-increase {
+  color: #facc15;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.28);
 }
 
 .split-result-item strong.normal-pressure {
@@ -999,24 +1025,25 @@ Select a hydraulic calculation mode.
           <div id="splitLayFields" class="field full" hidden>
   <div class="split-lay-panel">
 
-    <strong>Split Lay Setup</strong>
+    <strong>Supply Setup</strong>
 
     <p class="helper">
-      Build the hose path from pump to nozzle.
+       Build the supply-side hydraulic path feeding the attack lines.
+
     </p>
 
     <div class="field full">
-      <label>Layout</label>
+      <label>Supply Layout</label>
       <div class="mode-buttons" id="splitSectionButtons">
-        <button type="button" data-sections="2">2 Sections</button>
-        <button type="button" data-sections="3">3 Sections</button>
+        <button type="button" data-sections="2">1 Section</button>
+        <button type="button" data-sections="3">2 Sections</button>
       </div>
     </div>
 
    <div class="field full">
   <label class="split-inline-toggle">
     <input type="checkbox" id="splitDualSupplyToggle" />
-    <span>Split Section 1 into matching dual supply lines?<span>
+    <span>Split supply section 1 into matching dual lines?</span>
   </label>
 </div>
       <p class="helper">
@@ -1083,6 +1110,13 @@ Select a hydraulic calculation mode.
       </div>
 
     </div>
+            <div class="field full">
+  <strong>Attack Setup</strong>
+
+  <p class="helper">
+    Configure nozzle paths and attack line hydraulics.
+  </p>
+</div>
 
     <div class="field full">
       <label>Attack Lines</label>
@@ -1318,9 +1352,9 @@ Select a hydraulic calculation mode.
 
     <div class="split-result-section">
 
-      <div class="split-result-title">
+      <div class="split-result-title supply-1-title">
         Supply Section 1
-      </div>
+    </div>
 
       <div class="split-result-details">
 
@@ -1353,9 +1387,9 @@ Select a hydraulic calculation mode.
   hidden
 >
 
-  <div class="split-result-title">
-    Supply Section 2
-  </div>
+  <div class="split-result-title supply-2-title">
+  Supply Section 2
+</div>
 
   <div class="split-result-details">
 
@@ -1380,24 +1414,24 @@ Select a hydraulic calculation mode.
 
     <div class="split-result-section">
 
-      <div class="split-result-title">
-        Attack Line 1
+      <div class="split-result-title attack-1-title">
+        Attack Line 1 • Actual Delivered Conditions
       </div>
 
       <div class="split-result-details">
 
         <div class="split-result-item">
-          <p>Actual Flow</p>
+          <p>Actual Delivered Flow</p>
           <strong id="splitAttack1FlowResult">—</strong>
         </div>
 
         <div class="split-result-item">
-          <p>Nozzle Pressure</p>
+          <p>Actual Nozzle Pressure</p>
           <strong id="splitAttack1NpResult">—</strong>
         </div>
 
         <div class="split-result-item">
-          <p>Attack FL</p>
+          <p>Actual Attack FL</p>
           <strong id="splitAttack1FlResult">—</strong>
         </div>
 
@@ -1411,24 +1445,24 @@ Select a hydraulic calculation mode.
       hidden
     >
 
-      <div class="split-result-title">
-        Attack Line 2
+      <div class="split-result-title attack-2-title">
+        Attack Line 2 • Actual Delivered Conditions
       </div>
 
       <div class="split-result-details">
 
         <div class="split-result-item">
-          <p>Actual Flow</p>
+          <p>Actual Delivered Flow</p>
           <strong id="splitAttack2FlowResult">—</strong>
         </div>
 
         <div class="split-result-item">
-          <p>Nozzle Pressure</p>
+          <p>Actual Nozzle Pressure</p>
           <strong id="splitAttack2NpResult">—</strong>
         </div>
 
         <div class="split-result-item">
-          <p>Attack FL</p>
+          <p>Actual Attack FL</p>
           <strong id="splitAttack2FlResult">—</strong>
         </div>
 
@@ -3853,7 +3887,7 @@ function calculateSplitSmoothboreReaction(line, nozzlePressure) {
   els.splitAttack1FlowResult.textContent =
     `${Math.round(actualAttack1.actualFlow)} GPM`;
       els.splitAttack1FlowResult.classList.toggle(
-  "overpressure",
+  "flow-increase",
   actualAttack1.actualNozzlePressure >
     actualAttack1.nozzlePressure + 1
 );
@@ -3873,7 +3907,7 @@ function calculateSplitSmoothboreReaction(line, nozzlePressure) {
     els.splitAttack2FlowResult.textContent =
       `${Math.round(actualAttack2.actualFlow)} GPM`;
     els.splitAttack2FlowResult.classList.toggle(
-  "overpressure",
+  "flow-increase",
   actualAttack2.actualNozzlePressure >
     actualAttack2.nozzlePressure + 1
 );
