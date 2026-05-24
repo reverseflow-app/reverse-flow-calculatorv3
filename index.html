@@ -2400,24 +2400,29 @@ if (splitAttack2Hose) {
 
 </div>
 <div style="
-  margin-top:10px;
+  margin-top:18px;
+  margin-bottom:18px;
 ">
 
   <div style="
-    font-size:44px;
+    font-size:56px;
     font-weight:900;
-    line-height:1;
-    margin-bottom:8px;
+    line-height:0.95;
+    margin-bottom:10px;
+    letter-spacing:-1px;
   ">
     ${preset.calculatedPdp || "—"} PSI
   </div>
 
-  <div class="helper" style="
-    font-size:15px;
+  <div style="
+    font-size:18px;
+    font-weight:700;
+    opacity:0.82;
     line-height:1.4;
-    margin-bottom:10px;
   ">
-    ${preset.calculatedFlow || "—"} • ${preset.hoseLength || "—"}' ${preset.hoseSize || "—"} • ${nozzleDisplay}
+    ${preset.calculatedFlow || "—"} •
+    ${preset.hoseLength || "—"}' ${preset.hoseSize || "—"} •
+    ${nozzleDisplay}
   </div>
 
 </div>
@@ -2425,12 +2430,14 @@ if (splitAttack2Hose) {
         <div style="
   display:flex;
   gap:10px;
-  margin-top:16px;
+  margin-top:12px;
 ">
 
   <button
     class="small-button"
     style="flex:1;"
+    padding:14px 12px;
+    min-height:52px;
     onclick="loadPumpChartPreset('${preset.id}')"
   >
     Load Setup
@@ -2439,6 +2446,8 @@ if (splitAttack2Hose) {
   <button
     class="small-button"
     style="flex:1;"
+    padding:14px 12px;
+    min-height:52px;
     onclick="deletePumpChartPreset('${preset.id}')"
   >
     Delete
