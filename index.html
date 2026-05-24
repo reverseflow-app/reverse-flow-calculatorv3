@@ -916,12 +916,12 @@ Select a hydraulic calculation mode.
       </div>
     </div>
 
-    <div class="field full">
-      <label>Initial Supply</label>
-      <div class="mode-buttons" id="splitSupplyLayoutButtons">
-        <button type="button" data-supply-layout="single">Single Supply</button>
-        <button type="button" data-supply-layout="dual">Dual Supply</button>
-      </div>
+   <div class="field full">
+  <label class="split-inline-toggle">
+    <input type="checkbox" id="splitDualSupplyToggle" />
+    <span>Split this section into matching dual supply lines?</span>
+  </label>
+</div>
       <p class="helper">
         Dual supply uses matching hose size and matching length.
       </p>
@@ -1675,9 +1675,8 @@ function isModifiedHoseCoefficient(hoseId) {
       smoothboreTip: "",
       applianceLoss: "0",
       splitLay: {
+        dualSupply: false,
   sectionCount: "2",
-
-  supplyLayout: "single",
   supplyLength: "",
   supplyHoseSize: "3",
 
@@ -1770,6 +1769,7 @@ function isModifiedHoseCoefficient(hoseId) {
       nozzleReaction: document.getElementById("nozzleReaction"),
       setupDisplay: document.getElementById("setupDisplay"),
       warningsCard: document.getElementById("warningsCard"),
+      splitDualSupplyToggle: document.getElementById("splitDualSupplyToggle"),
       splitResultsCard: document.getElementById("splitResultsCard"),
       splitPrimaryPdp: document.getElementById("splitPrimaryPdp"),
       splitSupplyFlow: document.getElementById("splitSupplyFlow"),
@@ -2274,15 +2274,51 @@ function syncSmoothboreUi() {
   }
 }
 
+function enforceSplitLayRestrictions() {
+  const appliance1 = state.splitLay.appliance1;
+
+  const attack2Button = document.querySelector(
+    '#splitAttackLineButtons button[data-attack-lines="2"]'
+  );
+
+  const attack1Button = document.querySelector(
+    '#splitAttackLineButtons button[data-attack-lines="1"]'
+  );
+
+  const twoAttackAllowed =
+    appliance1 === "gatedWye";
+
+  if (!twoAttackAllowed) {
+    state.splitLay.attackLines = "1";
+
+    if (attack2Button) {
+      attack2Button.disabled = true;
+    }
+  } else {
+    if (attack2Button) {
+      attack2Button.disabled = false;
+    }
+  }
+
+  if (attack1Button) {
+    attack1Button.disabled = false;
+  }
+}
+
 function syncSplitLayUi() {
+  enforceSplitLayRestrictions();
+
   if (!isSplitLayMode()) return;
+  if (els.splitDualSupplyToggle) {
+  els.splitDualSupplyToggle.checked =
+    state.splitLay.dualSupply;
+}
 
   const supply2Section = document.getElementById("splitSupply2Section");
   const attack2Section = document.getElementById("splitAttack2Section");
   const attackSections = document.getElementById("splitAttackSections");
 
   const sectionButtons = document.querySelectorAll("#splitSectionButtons button");
-  const supplyLayoutButtons = document.querySelectorAll("#splitSupplyLayoutButtons button");
   const attackLineButtons = document.querySelectorAll("#splitAttackLineButtons button");
 
   sectionButtons.forEach(button => {
@@ -2291,14 +2327,6 @@ function syncSplitLayUi() {
       button.dataset.sections === state.splitLay.sectionCount
     );
   });
-
-  supplyLayoutButtons.forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.supplyLayout === state.splitLay.supplyLayout
-    );
-  });
-
   attackLineButtons.forEach(button => {
     button.classList.toggle(
       "active",
@@ -2548,14 +2576,12 @@ if (!confirmed) return;
   });
 });
 
-document.querySelectorAll("#splitSupplyLayoutButtons button").forEach(button => {
-  button.addEventListener("click", () => {
-    state.splitLay.supplyLayout = button.dataset.supplyLayout;
+els.splitDualSupplyToggle?.addEventListener("change", () => {
+  state.splitLay.dualSupply =
+    els.splitDualSupplyToggle.checked;
 
-    saveState();
-    syncSplitLayUi();
-    calculateAndRender();
-  });
+  saveState();
+  calculateAndRender();
 });
 
 document.querySelectorAll("#splitAttackLineButtons button").forEach(button => {
@@ -3328,8 +3354,8 @@ L2 ${Math.round(actualAttack2.actualFlow)} GPM @ ${Math.round(actualAttack2.actu
       ? `Dual ${supply1Hose.label} Supply`
       : `${supply1Length}' ${supply1Hose.label} Supply`,
     attackLines === 2
-      ? `${attack1.reaction} / ${attack2.reaction}`
-      : attack1.reaction
+  ? `${actualAttack1.actualReaction} / ${actualAttack2.actualReaction}`
+  : actualAttack1.actualReaction
   );
 
   renderWarnings(warnings);
@@ -3545,14 +3571,13 @@ function calculateSplitAttackLine(lineNumber, warnings) {
 
 }
     function calculateActualSplitLine(line, branchPressure) {
+  const coefficient = getActiveHoseCoefficient(line.hose.id);
+  const lengthHundreds = line.length / 100;
 
-  const actualNozzlePressure =
-    Math.max(0, branchPressure - line.totalFl);
-
+  let actualNozzlePressure = line.nozzlePressure;
   let actualFlow = line.flow;
 
   if (line.nozzleType === "smoothbore") {
-
     const tipId =
       state.splitLay[`attack${line.lineNumber}SmoothboreTip`];
 
@@ -3560,23 +3585,82 @@ function calculateSplitAttackLine(lineNumber, warnings) {
       SMOOTHBORE_TIPS.find(t => t.id === tipId);
 
     if (tip) {
+      const tipConstant =
+        29.7 * tip.diameter * tip.diameter / 100;
+
+      const frictionMultiplier =
+        coefficient *
+        tipConstant *
+        tipConstant *
+        lengthHundreds;
+
+      actualNozzlePressure =
+        branchPressure / (1 + frictionMultiplier);
 
       actualFlow =
-        smoothboreGpm(
-          tip.diameter,
-          actualNozzlePressure
-        );
-
+        smoothboreGpm(tip.diameter, actualNozzlePressure);
     }
+  } else {
+    const designFlow = line.flow;
+    const designNozzlePressure = line.nozzlePressure;
 
+    const frictionMultiplier =
+      coefficient *
+      Math.pow(designFlow / 100, 2) *
+      lengthHundreds /
+      designNozzlePressure;
+
+    actualNozzlePressure =
+      branchPressure / (1 + frictionMultiplier);
+
+    actualFlow =
+      designFlow *
+      Math.sqrt(actualNozzlePressure / designNozzlePressure);
   }
+
+  const actualFlPer100 =
+    coefficient * Math.pow(actualFlow / 100, 2);
+
+  const actualTotalFl =
+    actualFlPer100 * lengthHundreds;
+
+  const actualReaction =
+    line.nozzleType === "smoothbore"
+      ? calculateSplitSmoothboreReaction(line, actualNozzlePressure)
+      : calculateSplitFogReaction(actualFlow, actualNozzlePressure);
 
   return {
     ...line,
     actualNozzlePressure,
-    actualFlow
+    actualFlow,
+    actualFlPer100,
+    actualTotalFl,
+    actualReaction
   };
+}
+    function calculateSplitFogReaction(flow, nozzlePressure) {
+  if (!flow || !nozzlePressure) return "—";
 
+  return `${Math.round(
+    0.0505 * flow * Math.sqrt(nozzlePressure)
+  )} lb`;
+}
+
+function calculateSplitSmoothboreReaction(line, nozzlePressure) {
+  const tipId =
+    state.splitLay[`attack${line.lineNumber}SmoothboreTip`];
+
+  const tip =
+    SMOOTHBORE_TIPS.find(t => t.id === tipId);
+
+  if (!tip || !nozzlePressure) return "—";
+
+  return `${Math.round(
+    1.57 *
+    tip.diameter *
+    tip.diameter *
+    nozzlePressure
+  )} lb`;
 }
 
 
@@ -3663,7 +3747,7 @@ function calculateSplitAttackLine(lineNumber, warnings) {
     `${Math.round(actualAttack1.actualNozzlePressure)} psi`;
 
   els.splitAttack1FlResult.textContent =
-    `${Math.round(actualAttack1.totalFl)} psi`;
+  `${Math.round(actualAttack1.actualTotalFl)} psi`
 
   if (actualAttack2) {
     els.splitAttack2FlowResult.textContent =
@@ -3673,7 +3757,7 @@ function calculateSplitAttackLine(lineNumber, warnings) {
       `${Math.round(actualAttack2.actualNozzlePressure)} psi`;
 
     els.splitAttack2FlResult.textContent =
-      `${Math.round(actualAttack2.totalFl)} psi`;
+     `${Math.round(actualAttack2.actualTotalFl)} psi`
   }
 }
     function setResult(rounded, calculated, total, per100, nozzle, setup, reaction = "-") {
