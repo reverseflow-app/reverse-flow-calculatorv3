@@ -400,7 +400,47 @@ button:active:not(:disabled) {
   font-weight: 800;
   font-size: 14px;
 }
-    
+
+    .split-inline-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+
+  padding: 0.9rem 1rem;
+
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  background: rgba(255,255,255,0.03);
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.split-inline-toggle input {
+  appearance: auto;
+  -webkit-appearance: checkbox;
+
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+
+  margin: 2px 0 0 0;
+
+  accent-color: #4f8cff;
+
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+
+  .split-inline-toggle {
+    background: rgba(255,255,255,0.02);
+  }
+
+}
 
     .toggle-row {
       display: flex;
