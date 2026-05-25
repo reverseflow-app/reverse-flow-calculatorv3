@@ -3104,7 +3104,11 @@ els.relayModeButton.addEventListener("click", () => {
 });
 
 els.splitLayButton.addEventListener("click", () => {
+  resetSplitLayInputs();
+  resetSplitLayResultCard();
   setMode("splitLay");
+  syncSplitLayInputsFromState();
+  resetSplitLayResultCard();
 });
 
 els.closeProModal.addEventListener("click", () => {
