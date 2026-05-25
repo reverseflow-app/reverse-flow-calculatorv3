@@ -1774,7 +1774,9 @@ Select a hydraulic calculation mode.
         <p><strong>Reverse Flow Mode</strong> Estimates GPM by working backwards using PDP, Nozzle Pressure, and Friction Loss.</p>
         <p><strong>Required PDP Mode</strong> Calculates the pump discharge pressure needed to achieve a target GPM.</p>
         <p><strong>Relay Pumping Mode</strong> Calculates the required PDP for a relay pumper to supply a receiving unit with a specific target flow.</p>
-        <p>For smoothbore calculations, select the tip size manually when in PDP mode. Smoothbore nozzle pressures will be calculated automatically in Reverse Flow mode.</p>
+        <p><strong>Split Lay Mode</strong> Models complex split-supply and split-attack hose layouts with dynamic pressure balancing, recalculated nozzle pressures, actual delivered flow, and appliance loss handling.</p>
+        <p>When unequal attack lines are supplied from a common source, lower-demand lines may become overpressured. Reverse Flow dynamically recalculates actual nozzle pressure, flow, friction loss, and nozzle reaction to reflect real-world hydraulic behavior.</p>
+        <p>Smoothbore tip size is selected manually. In Reverse Flow and Split Lay modes, nozzle pressure and actual delivered flow may be dynamically recalculated based on available pressure, hose configuration, and hydraulic demand.</p>
         <p>
   Actual pump discharge pressure may vary due to internal plumbing configurations, apparatus piping layouts, valves, devices, and other system-specific restrictions not automatically accounted for by the calculators.
 </p>
@@ -1825,12 +1827,24 @@ Select a hydraulic calculation mode.
 
       <div
   class="badge beta"
-  style="display:inline-flex;white-space:nowrap;"
+  style="
+    display:inline-flex;
+    align-items:center;
+    white-space:nowrap;
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:11px;
+    letter-spacing:0.08em;
+    background:rgba(255,255,255,0.06);
+    border:1px solid var(--border);
+    color:var(--ink);
+    font-weight:800;
+  "
 >
   PUMP CHART
 </div>
 
-      <h2>Pump Chart</h2>
+      <h2>Saved Setups</h2>
 
       <button
         id="closePumpChartModal"
