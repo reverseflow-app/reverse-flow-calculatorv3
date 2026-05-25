@@ -2425,15 +2425,18 @@ const splitAttack2 =
     ? `<br>A2 • ${splitLay.attack2Length || "—"}' ${splitLay.attack2HoseSize || "—"} • ${attack2Description}`
     : "";
 
-const setupSummary = isSplitLayPreset
-  ? `
-    ${splitSupply1}
-    ${splitSupply2}
-    <br><br>
-    ${splitAttack1}
-    ${splitAttack2}
-  `
-  : `${preset.calculatedFlow || "—"} • ${preset.hoseLength || "—"}' ${preset.hoseSize || "—"} • ${nozzleDisplay}`;
+const setupSummary =
+  preset.mode === "relay"
+    ? `${preset.calculatedFlow || "—"} • ${preset.hoseLength || "—"}' ${preset.hoseSize || "—"}`
+    : isSplitLayPreset
+      ? `
+        ${splitSupply1}
+        ${splitSupply2}
+        <br><br>
+        ${splitAttack1}
+        ${splitAttack2}
+      `
+      : `${preset.calculatedFlow || "—"} • ${preset.hoseLength || "—"}' ${preset.hoseSize || "—"} • ${nozzleDisplay}`;
 
     return `
       <div class="section-card" style="margin-bottom:12px;">
