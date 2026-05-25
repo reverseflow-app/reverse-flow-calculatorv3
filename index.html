@@ -2683,9 +2683,9 @@ if (usingCustomPressure) {
       els.customCoefficient.closest(".field").style.display = isSplitLayMode() ? "none" : "";
 
       els.pdp.value =
-        isRequiredPdpMode()
-      ? getTargetFlowValue()
-          : state.pdp;
+  isRequiredPdpMode() || isRelayMode()
+    ? getTargetFlowValue()
+    : state.pdp;
 
       document.querySelector('label[for="hoseLength"]').textContent =
   isRelayMode() ? "Relay Distance" : "Hose Length";
