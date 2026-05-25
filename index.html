@@ -1487,11 +1487,42 @@ Select a hydraulic calculation mode.
 
          <div class="section-divider"></div>
           
-        <div class="field">
-          <label for="applianceLoss">Appliance / Elevation Loss</label>
-          <input id="applianceLoss" inputmode="decimal" placeholder="0" />
-          <p class="helper">Manual PSI value. Defaults to 0.</p>
-        </div>
+
+  <div class="field">
+  <label for="applianceLoss">
+    Appliance / Elevation Loss
+  </label>
+
+  <div style="display:flex; gap:8px; align-items:center;">
+
+    <input
+      id="applianceLoss"
+      type="number"
+      inputmode="numeric"
+      pattern="-?[0-9]*"
+      placeholder="0"
+      style="flex:1;"
+    />
+
+    <button
+      id="invertApplianceLossButton"
+      class="small-button"
+      type="button"
+      style="
+        width:64px;
+        min-height:48px;
+        flex-shrink:0;
+      "
+    >
+      +/-
+    </button>
+
+  </div>
+
+  <p class="helper">
+    Manual PSI value. Use negative values for elevation gain/downhill pumping.
+  </p>
+</div>
 
         <div class="field">
           <div class="toggle-row">
@@ -2149,6 +2180,8 @@ function isModifiedHoseCoefficient(hoseId) {
         document.getElementById("customNozzlePressure"),
 
       applianceLoss: document.getElementById("applianceLoss"),
+      invertApplianceLossButton:
+        document.getElementById("invertApplianceLossButton"),
       coefficientToggle: document.getElementById("coefficientToggle"),
       customCoefficient: document.getElementById("customCoefficient"),
       saveCoefficientDefaultButton: document.getElementById("saveCoefficientDefaultButton"),
@@ -3080,6 +3113,19 @@ els.saveCoefficientDefaultButton.textContent =
   event.preventDefault();
   event.stopPropagation();
   saveCurrentSetupAsPreset();
+});
+      els.invertApplianceLossButton?.addEventListener("click", () => {
+
+  const current =
+    parseFloat(els.applianceLoss.value) || 0;
+
+  const inverted = current * -1;
+
+  els.applianceLoss.value = inverted;
+
+  state.applianceLoss = inverted;
+
+  calculateAndRender();
 });
       els.resetButton.addEventListener("click", resetCalculator);
       els.resetHoseCoefficientsButton.addEventListener("click", () => {
