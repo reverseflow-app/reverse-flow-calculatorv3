@@ -3468,6 +3468,39 @@ function resetCalculator() {
   };
 }
 
+    function syncSplitLayInputsFromState() {
+  [
+    ["splitSupplyLength", state.splitLay.supplyLength || ""],
+    ["splitSupplyHose", state.splitLay.supplyHoseSize || "3"],
+    ["splitAppliance1", state.splitLay.appliance1 || "gatedWye"],
+
+    ["splitSupply2Length", state.splitLay.supply2Length || ""],
+    ["splitSupply2Hose", state.splitLay.supply2HoseSize || "1.88"],
+    ["splitAppliance2", state.splitLay.appliance2 || "gateValve"],
+
+    ["splitAttack1Length", state.splitLay.attack1Length || ""],
+    ["splitAttack1Hose", state.splitLay.attack1HoseSize || "1.75"],
+    ["splitAttack1NozzleType", state.splitLay.attack1NozzleType || "fog"],
+    ["splitAttack1NozzlePressure", state.splitLay.attack1NozzlePressure || "50"],
+    ["splitAttack1Flow", state.splitLay.attack1Flow || ""],
+    ["splitAttack1SmoothboreTip", state.splitLay.attack1SmoothboreTip || ""],
+
+    ["splitAttack2Length", state.splitLay.attack2Length || ""],
+    ["splitAttack2Hose", state.splitLay.attack2HoseSize || "1.75"],
+    ["splitAttack2NozzleType", state.splitLay.attack2NozzleType || "fog"],
+    ["splitAttack2NozzlePressure", state.splitLay.attack2NozzlePressure || "50"],
+    ["splitAttack2Flow", state.splitLay.attack2Flow || ""],
+    ["splitAttack2SmoothboreTip", state.splitLay.attack2SmoothboreTip || ""]
+  ].forEach(([id, value]) => {
+    const element = document.getElementById(id);
+    if (element) element.value = value;
+  });
+
+  if (els.splitDualSupplyToggle) {
+    els.splitDualSupplyToggle.checked = !!state.splitLay.dualSupply;
+  }
+}
+    
 function applyPreset(presetId) {
   if (!presetId) return;
 
@@ -3509,6 +3542,7 @@ function applyPreset(presetId) {
 
   populateHoseOptions();
   syncInputsFromState();
+  syncSplitLayInputsFromState();
   syncSmoothboreUi();
   syncModeUi();
   renderPressureButtons();
