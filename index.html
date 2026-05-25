@@ -3382,8 +3382,10 @@ document.querySelectorAll("#splitAttackLineButtons button").forEach(button => {
   // ========================================
   // STANDARD CALCULATOR DEFAULTS
   // ========================================
-  if (mode !== "splitLay") {
+ if (mode !== "splitLay") {
   resetSplitLayInputs();
+  syncSplitLayInputsFromState();
+  resetSplitLayResultCard();
 }
       
   if (mode === "reverse" || mode === "requiredPdp") {
@@ -3412,7 +3414,10 @@ document.querySelectorAll("#splitAttackLineButtons button").forEach(button => {
 
   
       renderPressureButtons();
-calculateAndRender();
+    calculateAndRender();
+      if (mode !== "splitLay") {
+  resetSplitLayResultCard();
+}
 }
 
 function resetCalculator() {
