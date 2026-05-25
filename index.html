@@ -2804,6 +2804,10 @@ if (els.splitResultsCard) {
   els.splitResultsCard.hidden = !isSplitLayMode();
 }
 
+if (!isSplitLayMode()) {
+  resetSplitLayResultCard();
+}
+
 if (els.standardResultsCard) {
   els.standardResultsCard.hidden = isSplitLayMode();
 }
@@ -2866,7 +2870,47 @@ function enforceSplitLayRestrictions() {
     attack1Button.disabled = false;
   }
 }
+function resetSplitLayResultCard() {
+  [
+    "splitPrimaryPdp",
+    "splitSupplyLayoutResult",
+    "splitSupplyFlow",
+    "splitSupplyLoss",
+    "splitApplianceLoss",
+    "splitSupply2Flow",
+    "splitSupply2Loss",
+    "splitAppliance2Loss",
+    "splitAttack1FlowResult",
+    "splitAttack1NpResult",
+    "splitAttack1FlResult",
+    "splitAttack1ReactionResult",
+    "splitAttack2FlowResult",
+    "splitAttack2NpResult",
+    "splitAttack2FlResult",
+    "splitAttack2ReactionResult"
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = "—";
+  });
 
+  if (els.splitAttack1PressureTag) {
+    els.splitAttack1PressureTag.textContent = "—";
+    els.splitAttack1PressureTag.className = "pressure-path-tag";
+  }
+
+  if (els.splitAttack2PressureTag) {
+    els.splitAttack2PressureTag.textContent = "—";
+    els.splitAttack2PressureTag.className = "pressure-path-tag";
+  }
+
+  if (els.splitSupply2ResultSection) {
+    els.splitSupply2ResultSection.hidden = true;
+  }
+
+  if (els.splitAttack2ResultSection) {
+    els.splitAttack2ResultSection.hidden = true;
+  }
+}
 function syncSplitLayUi() {
   enforceSplitLayRestrictions();
 
