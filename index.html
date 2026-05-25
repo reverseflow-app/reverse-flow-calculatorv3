@@ -2384,11 +2384,14 @@ if (splitAttack2Hose) {
         ? `${preset.smoothboreTip || "SB"} Smoothbore`
         : `Fog @ ${preset.nozzlePressure} psi`;
 
-    const typeLabel = isSplitLayPreset
-      ? "SPLIT LAY"
-      : preset.nozzleType === "smoothbore"
-        ? "SMOOTHBORE"
-        : "FOG";
+    const typeLabel =
+  preset.mode === "requiredPdp"
+    ? "REQUIRED PDP"
+    : preset.mode === "relay"
+      ? "RELAY"
+      : preset.mode === "splitLay"
+        ? "SPLIT LAY"
+        : "REVERSE FLOW";
 
     const splitLay = preset.splitLay || {};
 
