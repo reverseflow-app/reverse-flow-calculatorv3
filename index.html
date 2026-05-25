@@ -1150,11 +1150,8 @@ select {
     <section class="card">
       <div class="form-grid">
         <div class="field full">
-          <label for="presetSelect">Saved Setup</label>
-          <select id="presetSelect">
-            <option value="">No saved setup selected</option>
-          </select>
-          <p class="helper">Select a saved hose/nozzle setup to quickly fill the calculator.</p>
+          <label>Pump Chart</label>
+<p class="helper">Save, load, and manage operational hose/nozzle setups.</p>
           <div id="pumpChartButtons">
 
   <button
@@ -2349,15 +2346,17 @@ if (splitAttack2Hose) {
     }
 
     function renderPresetOptions() {
-      const presets = loadPresets();
+  if (!els.presetSelect) return;
 
-      els.presetSelect.innerHTML = `
-        <option value="">No saved setup selected</option>
-        ${presets.map(preset => (
-          `<option value="${preset.id}">${preset.name}</option>`
-        )).join("")}
-      `;
-    }
+  const presets = loadPresets();
+
+  els.presetSelect.innerHTML = `
+    <option value="">No saved setup selected</option>
+    ${presets.map(preset => (
+      `<option value="${preset.id}">${preset.name}</option>`
+    )).join("")}
+  `;
+}
 
       function renderPumpChart() {
 
@@ -3004,7 +3003,9 @@ els.saveCoefficientDefaultButton.textContent =
     // EVENT HANDLING
     // ========================================
     function bindEvents() {
-      els.presetSelect.addEventListener("change", e => applyPreset(e.target.value));
+    if (els.presetSelect) {
+  els.presetSelect.addEventListener("change", e => applyPreset(e.target.value));
+}
       els.savePresetButton.addEventListener("click", event => {
   event.preventDefault();
   event.stopPropagation();
@@ -3365,12 +3366,9 @@ document.querySelectorAll("#splitAttackLineButtons button").forEach(button => {
   
       renderPressureButtons();
 calculateAndRender();
-
-els.presetSelect.value = "";
-els.presetSelect.selectedIndex = 0;
 }
 
-    function resetCalculator() {
+function resetCalculator() {
   state = {
     ...DEFAULT_STATE,
     splitLay: {
@@ -3378,8 +3376,10 @@ els.presetSelect.selectedIndex = 0;
     }
   };
 
+  if (els.presetSelect) {
   els.presetSelect.value = "";
   els.presetSelect.selectedIndex = 0;
+}
 
   populateHoseOptions();
   syncInputsFromState();
@@ -3408,7 +3408,9 @@ els.presetSelect.selectedIndex = 0;
         Object.assign(existingPreset, buildPresetData());
         savePresets(presets);
         renderPresetOptions();
-        els.presetSelect.value = existingPreset.id;
+        if (els.presetSelect) {
+  els.presetSelect.value = existingPreset.id;
+}
         alert(`Updated preset: ${existingPreset.name}`);
         return;
       }
@@ -3422,7 +3424,9 @@ els.presetSelect.selectedIndex = 0;
       presets.push(newPreset);
       savePresets(presets);
       renderPresetOptions();
-      els.presetSelect.value = newPreset.id;
+      if (els.presetSelect) {
+  els.presetSelect.value = newPreset.id;
+}
       alert(`Saved setup: ${newPreset.name}`);
     }
 
@@ -3463,74 +3467,56 @@ els.presetSelect.selectedIndex = 0;
     splitLay: JSON.parse(JSON.stringify(state.splitLay))
   };
 }
-    function applyPreset(presetId) {
+
+function applyPreset(presetId) {
   if (!presetId) return;
 
   const presets = loadPresets();
   const preset = presets.find(item => item.id === presetId);
   if (!preset) return;
 
+  const isSplitPreset = preset.mode === "splitLay";
+
   state = {
-  ...state,
+    ...state,
 
-  hoseLength: preset.hoseLength || "",
-  hoseSize: preset.hoseSize || state.hoseSize,
-  nozzleType: preset.nozzleType || state.nozzleType,
-  nozzlePressure: preset.nozzlePressure || state.nozzlePressure,
+    mode: isSplitPreset
+      ? "splitLay"
+      : state.mode,
 
-  smoothboreTip:
-    preset.smoothboreTip || "",
+    hoseLength: preset.hoseLength || "",
+    hoseSize: preset.hoseSize || state.hoseSize,
+    nozzleType: preset.nozzleType || state.nozzleType,
+    nozzlePressure: preset.nozzlePressure || state.nozzlePressure,
 
-  applianceLoss:
-    preset.applianceLoss || "0",
+    smoothboreTip:
+      preset.smoothboreTip || "",
 
-  useCustomCoefficient:
-    preset.useCustomCoefficient || false,
+    applianceLoss:
+      preset.applianceLoss || "0",
 
-  customCoefficient:
-    preset.customCoefficient || "",
+    useCustomCoefficient:
+      preset.useCustomCoefficient || false,
 
-  splitLay: {
-    ...DEFAULT_STATE.splitLay,
-    ...(preset.splitLay || {})
-  }
-};
+    customCoefficient:
+      preset.customCoefficient || "",
+
+    splitLay: {
+      ...DEFAULT_STATE.splitLay,
+      ...(preset.splitLay || {})
+    }
+  };
 
   populateHoseOptions();
-  saveState();
   syncInputsFromState();
-      [
-  ["splitSupplyLength", state.splitLay.supplyLength || ""],
-  ["splitSupplyHose", state.splitLay.supplyHoseSize || "3"],
-  ["splitAppliance1", state.splitLay.appliance1 || "gatedWye"],
-
-  ["splitSupply2Length", state.splitLay.supply2Length || ""],
-  ["splitSupply2Hose", state.splitLay.supply2HoseSize || "1.88"],
-  ["splitAppliance2", state.splitLay.appliance2 || "gateValve"],
-
-  ["splitAttack1Length", state.splitLay.attack1Length || ""],
-  ["splitAttack1Hose", state.splitLay.attack1HoseSize || "1.75"],
-  ["splitAttack1NozzleType", state.splitLay.attack1NozzleType || "fog"],
-  ["splitAttack1NozzlePressure", state.splitLay.attack1NozzlePressure || "50"],
-  ["splitAttack1Flow", state.splitLay.attack1Flow || ""],
-  ["splitAttack1SmoothboreTip", state.splitLay.attack1SmoothboreTip || ""],
-
-  ["splitAttack2Length", state.splitLay.attack2Length || ""],
-  ["splitAttack2Hose", state.splitLay.attack2HoseSize || "1.75"],
-  ["splitAttack2NozzleType", state.splitLay.attack2NozzleType || "fog"],
-  ["splitAttack2NozzlePressure", state.splitLay.attack2NozzlePressure || "50"],
-  ["splitAttack2Flow", state.splitLay.attack2Flow || ""],
-  ["splitAttack2SmoothboreTip", state.splitLay.attack2SmoothboreTip || ""]
-].forEach(([id, value]) => {
-  const element = document.getElementById(id);
-  if (element) element.value = value;
-});
   syncSmoothboreUi();
   syncModeUi();
   renderPressureButtons();
   calculateAndRender();
+  saveState();
 }
-   window.loadPumpChartPreset = function(presetId) {
+
+window.loadPumpChartPreset = function(presetId) {
 
   applyPreset(presetId);
 
