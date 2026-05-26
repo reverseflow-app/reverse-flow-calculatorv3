@@ -4153,8 +4153,7 @@ const actualAttack2 =
     supply2TotalFl +
     appliance2Loss +
     supply1TotalFl +
-    appliance1Loss +
-    (parseFloat(state.applianceLoss) || 0);
+    appliance1Loss;
   if (totalPdp > 300) {
   warnings.push(
     "Calculated PDP exceeds 300 psi. Confirm hose/apparatus limits and department operating guidelines before using this setup."
