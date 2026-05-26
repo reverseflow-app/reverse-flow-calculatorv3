@@ -1912,7 +1912,7 @@ Select a hydraulic calculation mode.
 // APP CONFIG
 // ========================================
 
-const APP_VERSION = "3.7.0-pro-beta";
+const APP_VERSION = "3.7.1-pro-beta";
     const BUILD_DATE = "2026-05-24";
 
 const STORAGE_KEY = "reverse-flow-calculator-v3";
@@ -2873,9 +2873,6 @@ if (splitLayFields) {
 
 if (els.splitResultsCard) {
   els.splitResultsCard.hidden = !isSplitLayMode();
-}
-      if (!isSplitLayMode()) {
-  resetSplitLayResultCard();
 }
 
 if (!isSplitLayMode()) {
@@ -3854,7 +3851,7 @@ calculateReverseFlow({ ...inputs, warnings });
   setResult(
     "—",
     "—",
-    "IMPOSSIBLE",
+    "—",
     "—",
     getNozzleDisplay(),
     getSetupDisplay(),
@@ -3887,14 +3884,14 @@ calculateReverseFlow({ ...inputs, warnings });
       }
 
       setResult(
-        roundedGpm,
-        `${Math.round(calculatedGpm)} GPM`,
-        `${Math.round(totalFrictionLoss)} psi`,
-        `${Math.round(frictionLossPer100)} psi`,
-        getNozzleDisplay(),
-        getSetupDisplay(),
-        nozzleReaction
-      );
+  roundedGpm,
+  `${Math.round(calculatedGpm)} GPM`,
+  `${totalFrictionLoss.toFixed(1)} psi`,
+  `${frictionLossPer100.toFixed(1)} psi`,
+  getNozzleDisplay(),
+  getSetupDisplay(),
+  nozzleReaction
+);
 
       renderWarnings(warnings);
     }
@@ -4020,14 +4017,14 @@ function calculateRelayPdp({
   }
 
   setResult(
-    Math.round(requiredRelayPdp),
-    `${Math.round(targetGpm)} GPM`,
-    `${Math.round(totalFrictionLoss)} psi`,
-    `${Math.round(frictionLossPer100)} psi`,
-    `${residualPressure} psi residual`,
-    `${hoseLength}' Relay Distance`,
-    "—"
-  );
+  Math.round(requiredRelayPdp),
+  `${Math.round(targetGpm)} GPM`,
+  `${totalFrictionLoss.toFixed(1)} psi`,
+  `${frictionLossPer100.toFixed(1)} psi`,
+  `${residualPressure} psi residual`,
+  `${hoseLength}' Relay Distance`,
+  "—"
+);
 
   renderWarnings(warnings);
 }
@@ -4207,11 +4204,11 @@ const actualAttack2 =
 )} psi total`,
     sectionCount === "3"
   ? attackLines === 2
-  ? `S1 ${Math.round(supply1TotalFl)} / S2 ${Math.round(supply2TotalFl)} / L1 ${Math.round(actualAttack1.actualTotalFl)} / L2 ${Math.round(actualAttack2.actualTotalFl)}`
-  : `S1 ${Math.round(supply1TotalFl)} / S2 ${Math.round(supply2TotalFl)} / A ${Math.round(actualAttack1.actualTotalFl)}`
+    ? `S1 ${supply1TotalFl.toFixed(1)} / S2 ${supply2TotalFl.toFixed(1)} / L1 ${actualAttack1.actualTotalFl.toFixed(1)} / L2 ${actualAttack2.actualTotalFl.toFixed(1)}`
+    : `S1 ${Math.round(supply1TotalFl)} / S2 ${Math.round(supply2TotalFl)} / A ${Math.round(actualAttack1.actualTotalFl)}`
   : attackLines === 2
-  ? `S ${Math.round(supply1TotalFl)} / L1 ${Math.round(actualAttack1.actualTotalFl)} / L2 ${Math.round(actualAttack2.actualTotalFl)}`
-  : `S ${Math.round(supply1TotalFl)} / A ${Math.round(actualAttack1.actualTotalFl)}`,
+    ? `S ${Math.round(supply1TotalFl)} / L1 ${Math.round(actualAttack1.actualTotalFl)} / L2 ${Math.round(actualAttack2.actualTotalFl)}`
+    : `S ${Math.round(supply1TotalFl)} / A ${Math.round(actualAttack1.actualTotalFl)}`,
    attackLines === 2
   ? `L1 ${Math.round(actualAttack1.actualFlow)} GPM @ ${Math.round(actualAttack1.actualNozzlePressure)} psi
 L2 ${Math.round(actualAttack2.actualFlow)} GPM @ ${Math.round(actualAttack2.actualNozzlePressure)} psi`
@@ -4602,7 +4599,7 @@ function calculateSplitSmoothboreReaction(line, nozzlePressure) {
     `${Math.round(totalAttackFlow)} GPM`;
 
   els.splitSupplyLoss.textContent =
-    `${Math.round(supply1TotalFl)} psi`;
+  `${supply1TotalFl.toFixed(1)} psi`;
 
   els.splitApplianceLoss.textContent =
     `${Math.round(appliance1Loss)} psi`;
@@ -4611,10 +4608,26 @@ function calculateSplitSmoothboreReaction(line, nozzlePressure) {
     `${Math.round(totalAttackFlow)} GPM`;
 
   els.splitSupply2Loss.textContent =
-    `${Math.round(supply2TotalFl)} psi`;
+  `${supply2TotalFl.toFixed(1)} psi`;
 
   els.splitAppliance2Loss.textContent =
     `${Math.round(appliance2Loss)} psi`;
+
+      [
+  els.splitAttack1FlowResult,
+  els.splitAttack2FlowResult,
+  els.splitAttack1NpResult,
+  els.splitAttack2NpResult
+].forEach(el => {
+
+  if (!el) return;
+
+  el.classList.remove(
+    "flow-increase",
+    "overpressure"
+  );
+
+});
 
   els.splitAttack1FlowResult.textContent =
     `${Math.round(actualAttack1.actualFlow)} GPM`;
@@ -4633,7 +4646,7 @@ function calculateSplitSmoothboreReaction(line, nozzlePressure) {
   );
 
   els.splitAttack1FlResult.textContent =
-  `${Math.round(actualAttack1.actualTotalFl)} psi`;
+  `${actualAttack1.actualTotalFl.toFixed(1)} psi`;
     const pressureDifference =
   actualAttack2
     ? Math.abs(
@@ -4715,7 +4728,7 @@ els.splitAttack2PressureTag.className =
   );
 
     els.splitAttack2FlResult.textContent =
-     `${Math.round(actualAttack2.actualTotalFl)} psi`;
+  `${actualAttack2.actualTotalFl.toFixed(1)} psi`;
     els.splitAttack2ReactionResult.textContent =
   actualAttack2.actualReaction;
   }
