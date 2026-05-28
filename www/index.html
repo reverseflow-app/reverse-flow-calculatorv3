@@ -440,6 +440,10 @@ button:active:not(:disabled) {
   opacity: 1;
 }  
 
+body:not(.access-ready) .mode-card-pro::after {
+  display: none;
+}
+
 .mode-card-pro::after {
   content: "PRO";
   position: absolute;
@@ -1458,7 +1462,7 @@ Select a hydraulic calculation mode.
           <option value="smoothbore">Smoothbore</option>
           <option value="masterstream">Master Stream</option>
 </select>
-          <p class="helper">
+          <p class="helper" id="nozzleTypeHelper">
   Only nozzle style, nozzle pressure, and hose coefficient matter for these calculations.
 </p>
         </div>
@@ -1956,8 +1960,8 @@ Select a hydraulic calculation mode.
 // APP CONFIG
 // ========================================
 
-const APP_VERSION = "3.7.3-pro-beta!";
-    const BUILD_DATE = "2026-05-26";
+const APP_VERSION = "3.7.4-pro-beta!";
+    const BUILD_DATE = "2026-05-27";
 
 const STORAGE_KEY = "reverse-flow-calculator-v3";
 const PRESETS_KEY = "reverse-flow-calculator-presets-v1";
@@ -2252,6 +2256,7 @@ function isModifiedHoseCoefficient(hoseId) {
       hoseSize: document.getElementById("hoseSize"),
       nozzleTypeLabel: document.getElementById("nozzleTypeLabel"),
       nozzleType: document.getElementById("nozzleType"),
+      nozzleTypeHelper: document.getElementById("nozzleTypeHelper"),
       masterStreamTypeField:
       document.getElementById("masterStreamTypeField"),
 
@@ -2375,6 +2380,8 @@ function updateAccessBadge() {
     "pro-user",
     isProUser()
   );
+
+  document.body.classList.add("access-ready");
 
   const badge = document.getElementById("accessBadge");
 
@@ -2900,7 +2907,7 @@ document.querySelector('label[for="hoseSize"]').textContent =
   isRelayMode() ? "Relay Hose Layout" : "Hose Size";
 
 document.querySelector('label[for="applianceLoss"]').textContent =
-  isRelayMode() ? "Appliance / Elevation / Intake Loss" : "Appliance / Elevation Loss";
+  "Appliance / Elevation Loss";
     if (isSplitLayMode()) {
 
   document.documentElement.style.setProperty(
@@ -2994,7 +3001,7 @@ document.querySelector('label[for="applianceLoss"]').textContent =
 }
     
       els.nozzleType.closest(".field").style.display =
-  isSplitLayMode() ? "none" : "";
+  (isSplitLayMode() || isRelayMode()) ? "none" : "";
 els.nozzleTypeLabel.textContent = isRelayMode()
   ? "Receiving Engine Residual"
   : "Nozzle Style";
@@ -3052,6 +3059,9 @@ function syncSmoothboreUi() {
     els.masterStreamTypeField.hidden = true;
     els.masterStreamTypeField.style.display = "none";
 
+    els.masterStreamLossField.hidden = true;
+    els.masterStreamLossField.style.display = "none";
+
     els.dualLineSupplyField.hidden = true;
     els.dualLineSupplyField.style.display = "none";
 
@@ -3067,10 +3077,10 @@ function syncSmoothboreUi() {
   els.masterStreamTypeField.style.display =
     showMasterStream ? "" : "none";
 
-    els.masterStreamLossField.hidden =
-  !showMasterStream;
+  els.masterStreamLossField.hidden =
+    !showMasterStream;
 
-    els.masterStreamLossField.style.display =
+  els.masterStreamLossField.style.display =
     showMasterStream ? "" : "none";
 
   const showSmoothbore =
@@ -3097,7 +3107,6 @@ function syncSmoothboreUi() {
     els.smoothboreTip.value = "";
   }
 }
-
 function enforceSplitLayRestrictions() {
   const connectingAppliance =
   state.splitLay.sectionCount === "3"
