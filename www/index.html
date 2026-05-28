@@ -138,7 +138,10 @@ button:active:not(:disabled) {
   width: 100%;
   background: #081225;
   color: #ffffff;
-  padding: 24px 20px 26px;
+  padding:
+    calc(34px + env(safe-area-inset-top))
+    20px
+    28px;
   box-sizing: border-box;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
@@ -559,18 +562,21 @@ body.pro-user .mode-card-pro {
   }
 
   #pumpChartModal .pro-modal-content {
-    width: 100%;
-    max-height: 100vh;
-    min-height: 100vh;
+  width: 100%;
+  max-height: 100vh;
+  min-height: 100vh;
 
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
 
-    padding: 20px 16px calc(32px + env(safe-area-inset-bottom));
+  padding:
+    calc(52px + env(safe-area-inset-top))
+    16px
+    calc(32px + env(safe-area-inset-bottom));
 
-    overflow-y: auto;
-  }
+  overflow-y: auto;
+}
 
   #pumpChartModal .pro-modal-header {
     align-items: flex-start;
@@ -1475,6 +1481,16 @@ Select a hydraulic calculation mode.
           <select id="hoseSize"></select>
         </div>
 
+        <div class="field" id="relayResidualField" hidden>
+  <label for="relayResidualPressure">Receiving Engine Residual</label>
+  <select id="relayResidualPressure">
+    <option value="20">20 psi</option>
+    <option value="30">30 psi</option>
+    <option value="40">40 psi</option>
+    <option value="50">50 psi</option>
+  </select>
+</div>
+
         <div class="field">
           <label for="nozzleType" id="nozzleTypeLabel">Nozzle Style</label>
           <select id="nozzleType">
@@ -1980,8 +1996,8 @@ Select a hydraulic calculation mode.
 // APP CONFIG
 // ========================================
 
-const APP_VERSION = "3.7.4-pro-beta!";
-    const BUILD_DATE = "2026-05-27";
+const APP_VERSION = "3.7.5-pro-beta!";
+    const BUILD_DATE = "2026-05-28";
 
 const STORAGE_KEY = "reverse-flow-calculator-v3";
 const PRESETS_KEY = "reverse-flow-calculator-presets-v1";
@@ -2199,6 +2215,7 @@ function isModifiedHoseCoefficient(hoseId) {
       hoseLength: "",
       hoseSize: "1.88",
       nozzleType: "fog",
+      nozzleType: "fog",
 
       masterStreamType: "fog",
       masterStreamLoss: "25",
@@ -2274,6 +2291,8 @@ function isModifiedHoseCoefficient(hoseId) {
       pdp: document.getElementById("pdp"),
       hoseLength: document.getElementById("hoseLength"),
       hoseSize: document.getElementById("hoseSize"),
+      relayResidualField: document.getElementById("relayResidualField"),
+relayResidualPressure: document.getElementById("relayResidualPressure"),
       nozzleTypeLabel: document.getElementById("nozzleTypeLabel"),
       nozzleType: document.getElementById("nozzleType"),
       nozzleTypeHelper: document.getElementById("nozzleTypeHelper"),
@@ -2859,26 +2878,35 @@ if (usingCustomPressure) {
     // UI SYNCHRONIZATION
     // ========================================
     function syncInputsFromState() {
-      els.pdp.value = isRequiredPdpMode() ? state.targetGpm : state.pdp;
-      els.hoseLength.value = state.hoseLength;
-      els.hoseSize.value = state.hoseSize;
-      els.nozzleType.value = state.nozzleType;
-      els.masterStreamType.value =
-      state.masterStreamType;
+  els.pdp.value =
+    isRequiredPdpMode() || isRelayMode()
+      ? state.targetGpm
+      : state.pdp;
 
-      els.masterStreamLoss.value =
-      state.masterStreamLoss;
+  els.hoseLength.value = state.hoseLength;
+  els.hoseSize.value = state.hoseSize;
+  els.nozzleType.value = state.nozzleType;
 
-      els.dualLineSupplyToggle.checked =
-      state.dualLineSupply;
-      els.smoothboreTip.value = state.smoothboreTip;
-      els.applianceLoss.value = state.applianceLoss;
-      els.customCoefficient.value = state.customCoefficient;
+  els.relayResidualPressure.value =
+    state.relayResidualPressure || "30";
 
-      syncCoefficientUi();
-      syncSmoothboreUi();
-      syncModeUi();
-    }
+  els.masterStreamType.value =
+    state.masterStreamType;
+
+  els.masterStreamLoss.value =
+    state.masterStreamLoss;
+
+  els.dualLineSupplyToggle.checked =
+    state.dualLineSupply;
+
+  els.smoothboreTip.value = state.smoothboreTip;
+  els.applianceLoss.value = state.applianceLoss;
+  els.customCoefficient.value = state.customCoefficient;
+
+  syncCoefficientUi();
+  syncSmoothboreUi();
+  syncModeUi();
+}
 
     function syncModeUi() {
       const smoothboreRequiredPdp = isRequiredPdpMode() && isSmoothbore();
@@ -3020,32 +3048,25 @@ document.querySelector('label[for="applianceLoss"]').textContent =
 
 }
     
-      els.nozzleType.closest(".field").style.display =
-  (isSplitLayMode() || isRelayMode()) ? "none" : "";
-els.nozzleTypeLabel.textContent = isRelayMode()
-  ? "Receiving Engine Residual"
-  : "Nozzle Style";
-      if (isRelayMode()) {
-  els.nozzleType.innerHTML = `
-    <option value="10">10 psi</option>
-    <option value="20">20 psi</option>
-    <option value="30">30 psi</option>
-    <option value="40">40 psi</option>
-  `;
-  els.nozzleType.value = state.nozzleType;
-} else {
-  els.nozzleType.innerHTML = `
-    <option value="fog">Fog</option>
-    <option value="smoothbore">Smoothbore</option>
-    <option value="masterstream">Master Stream</option>
-  `;
-  els.nozzleType.value = state.nozzleType;
-}
+      els.nozzleTypeLabel.textContent = "Nozzle Style";
+
+els.nozzleType.innerHTML = `
+  <option value="fog">Fog</option>
+  <option value="smoothbore">Smoothbore</option>
+  <option value="masterstream">Master Stream</option>
+`;
+
+els.nozzleType.value = state.nozzleType;
 
 els.nozzlePressureLabel.closest(".field").style.display =
   (isRelayMode() || isSplitLayMode())
     ? "none"
     : "";
+
+    els.relayResidualField.hidden = !isRelayMode();
+
+    els.relayResidualField.style.display =
+      isRelayMode() ? "" : "none";
 
     const splitLayFields = document.getElementById("splitLayFields");
 
@@ -3421,6 +3442,11 @@ els.relayModeButton.addEventListener("click", () => {
   resetSplitLayInputs();
   syncSplitLayInputsFromState();
   resetSplitLayResultCard();
+});
+
+els.relayResidualPressure.addEventListener("change", e => {
+  state.relayResidualPressure = e.target.value;
+  updateCalculator();
 });
 
 els.splitLayButton.addEventListener("click", () => {
@@ -4312,7 +4338,8 @@ function calculateRelayPdp({
   warnings
 }) {
 
-  const residualPressure = Number(state.nozzleType);
+  const residualPressure =
+  Number(state.relayResidualPressure || 30);
 
   if (
     targetGpm === null ||
@@ -4350,6 +4377,16 @@ function calculateRelayPdp({
   `Target flow is above the normal reference range for ${selectedHose.chartName} hose. Confirm with department-approved flow testing or local operating guidance.`
 );
   }
+
+  if (requiredRelayPdp > 400) {
+  warnings.push(
+    "Calculated relay PDP exceeds 400 psi. This is beyond normal apparatus operating limits. Reduce flow, shorten the lay, add relay pumpers, or increase hose diameter."
+  );
+} else if (requiredRelayPdp > 300) {
+  warnings.push(
+    "Calculated relay PDP exceeds 300 psi. Confirm apparatus, hose, and department operating limits before using this setup."
+  );
+}
 
   setResult(
   Math.round(requiredRelayPdp),
