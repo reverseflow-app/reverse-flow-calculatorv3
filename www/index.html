@@ -5,8 +5,7 @@
        PWA / APP METADATA
   ========================================= -->
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#020617" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />  <meta name="theme-color" content="#020617" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Reverse Flow" />
@@ -1125,6 +1124,27 @@ select {
   height: 54px;
   font-size: 17px;
 }
+
+}
+
+@media screen and (orientation: landscape) {
+
+  main {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .mode-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
 }
     .detail::after {
